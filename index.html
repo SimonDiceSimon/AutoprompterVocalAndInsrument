@@ -23,17 +23,17 @@
     }
   </script>
   <style>
-    /* Altura dinámica para dispositivos móviles */
+    /* Soporte de altura dinámica para móviles y tablets */
     .app-height {
       height: 100vh;
       height: 100dvh;
     }
 
-    /* Ocultar barra de desplazamiento */
+    /* Ocultar barra de scroll nativa */
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Efectos de espejo para cristales teleprompter */
+    /* Efectos de espejo para teleprompter de cristal */
     .flip-x { transform: scaleX(-1); }
     .flip-y { transform: scaleY(-1); }
     .flip-both { transform: scale(-1, -1); }
@@ -42,33 +42,39 @@
       box-shadow: 0 0 35px rgba(14, 165, 233, 0.25);
     }
 
-    /* Fuente de acordes y texto */
+    /* Tipografía monoespaciada para alineación precisa de compás y acordes */
     .music-font {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
 
-    /* Estilos de Acordes Musicales */
+    /* Etiqueta de acorde flotante sobre sílaba */
     .chord-badge {
       font-family: inherit;
-      font-size: 0.62em;
-      line-height: 1.1;
+      font-size: 0.60em;
+      line-height: 1;
       font-weight: 800;
       color: #38bdf8;
-      text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
-      display: inline-block;
-      min-height: 1.1em;
-      white-space: nowrap;
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.55);
+      min-height: 1.15em;
       user-select: none;
+      white-space: nowrap;
+      display: block;
+      padding-bottom: 2px;
     }
 
+    /* Estructura de la palabra completa */
     .prompter-word {
       font-weight: inherit;
       font-size: inherit;
       letter-spacing: inherit;
-      transition: color 0.12s ease, opacity 0.12s ease;
+      display: inline-flex;
+      align-items: flex-end;
+      border-radius: 4px;
+      padding: 0 1px;
+      transition: color 0.12s ease, background-color 0.15s ease, opacity 0.12s ease;
     }
 
-    /* 1. Pendiente de cantar */
+    /* 1. Palabra por cantar */
     .word-upcoming {
       color: #ffffff !important;
       opacity: 0.95;
@@ -77,20 +83,21 @@
     /* 2. Palabra activa en lectura */
     .word-active {
       color: #38bdf8 !important;
+      background-color: rgba(14, 165, 233, 0.12);
+      text-shadow: 0 0 16px rgba(56, 189, 248, 0.9);
       opacity: 1;
-      text-shadow: 0 0 16px rgba(56, 189, 248, 0.85);
     }
 
-    /* 3. Ya cantado / pasado */
+    /* 3. Palabra ya cantada */
     .word-passed {
       color: #0284c7 !important;
-      opacity: 0.6;
+      opacity: 0.65;
     }
 
-    /* Bloques instrumentales (Intro, Solo de guitarra, Interludios) */
+    /* Bloques de Solo, Intro o Secciones Instrumentales */
     .section-cue {
       display: block;
-      background: linear-gradient(90deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.85));
+      background: linear-gradient(90deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
       border-left: 4px solid #38bdf8;
       padding: 6px 14px;
       margin: 14px 0;
@@ -100,16 +107,19 @@
       letter-spacing: 0.04em;
     }
 
+    /* Transición suave para el banner de notas de la banda */
     #band-notes-banner {
-      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
-      max-height: 140px;
+      transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.25s ease;
+      max-height: 160px;
     }
     #band-notes-banner.banner-collapsed {
       max-height: 0 !important;
       opacity: 0 !important;
-      padding: 0 !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
       border-bottom-width: 0 !important;
       pointer-events: none;
+      overflow: hidden;
     }
 
     .guide-drag-handle {
@@ -117,7 +127,7 @@
       cursor: ns-resize;
     }
 
-    /* Modo Enfoque para Escenario */
+    /* Modo Enfoque en Pantalla Completa */
     body.focus-mode #main-header,
     body.focus-mode #band-notes-banner,
     body.focus-mode #stats-panel {
@@ -142,20 +152,20 @@
           <span id="play-label">Iniciar</span>
         </button>
 
-        <button id="btn-rewind" title="Rebobinar canción (R)" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 active:scale-95 transition">
+        <button id="btn-rewind" title="Rebobinar al inicio (R)" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 active:scale-95 transition">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
         </button>
 
         <!-- Metrónomo Visual de Escenario -->
-        <div class="flex items-center gap-1 bg-slate-800/90 px-2 py-1 rounded-lg border border-slate-700" title="Metrónomo Visual en vivo">
+        <div class="flex items-center gap-1 bg-slate-800/90 px-2 py-1 rounded-lg border border-slate-700" title="Metrónomo Visual">
           <div id="metro-light" class="w-2.5 h-2.5 rounded-full bg-slate-600 transition-colors duration-75"></div>
           <span id="bpm-display" class="font-mono font-bold text-sky-400 min-w-[28px] text-center">80</span>
           <span class="text-[9px] text-slate-400 font-mono">BPM</span>
-          <button id="btn-audio-click" class="ml-1 text-[10px] text-slate-400 hover:text-white" title="Activar/Desactivar sonido de claqueta">🔈</button>
+          <button id="btn-audio-click" class="ml-1 text-[11px] text-slate-400 hover:text-white" title="Activar/Desactivar claqueta audible">🔈</button>
         </div>
       </div>
 
-      <!-- Selector de Canciones y Repertorio -->
+      <!-- Selector de Canciones y Gestión de Repertorio -->
       <div class="flex items-center gap-1 bg-slate-800/90 px-2 py-1 rounded-lg border border-slate-700">
         <button id="btn-prev-song" title="Tema anterior (P o [)" class="p-1 text-slate-400 hover:text-white transition">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
@@ -173,19 +183,24 @@
         </button>
       </div>
 
-      <!-- Herramientas Musicales: Transposición de Acordes & Visibilidad -->
-      <div class="flex items-center gap-1 bg-slate-800/90 px-2 py-1 rounded-lg border border-slate-700">
+      <!-- Transposición Armónica & Botón Permanente de Guía -->
+      <div class="flex items-center gap-1.5 bg-slate-800/90 px-2 py-1 rounded-lg border border-slate-700">
         <span class="text-slate-400 text-[11px] font-medium">Tono:</span>
-        <button id="btn-transpose-down" title="Bajar un semitono (-1)" class="w-5 h-5 flex items-center justify-center rounded bg-slate-700 hover:bg-slate-600 text-sky-400 font-black">-</button>
+        <button id="btn-transpose-down" title="Bajar semitono (-1)" class="w-5 h-5 flex items-center justify-center rounded bg-slate-700 hover:bg-slate-600 text-sky-400 font-black">-</button>
         <span id="transpose-indicator" class="font-mono text-sky-400 font-bold min-w-[24px] text-center text-xs">0</span>
-        <button id="btn-transpose-up" title="Subir un semitono (+1)" class="w-5 h-5 flex items-center justify-center rounded bg-slate-700 hover:bg-slate-600 text-sky-400 font-black">+</button>
+        <button id="btn-transpose-up" title="Subir semitono (+1)" class="w-5 h-5 flex items-center justify-center rounded bg-slate-700 hover:bg-slate-600 text-sky-400 font-black">+</button>
         
         <button id="btn-toggle-chords" class="ml-1 px-1.5 py-0.5 rounded bg-sky-950 border border-sky-500/40 text-sky-300 font-mono font-bold text-[10px] transition">
           Acordes: ON
         </button>
+
+        <!-- Botón permanente para mostrar/ocultar Guía de Banda -->
+        <button id="btn-header-toggle-guide" class="ml-1 px-2 py-0.5 rounded bg-amber-950/80 hover:bg-amber-900 border border-amber-500/50 text-amber-300 font-semibold text-[10px] transition" title="Mostrar u Ocultar la barra de guía técnica">
+          📌 Guía
+        </button>
       </div>
 
-      <!-- Reconocimiento de Voz y Configuración Visual -->
+      <!-- Reconocimiento de Voz y Ajustes de Pantalla -->
       <div class="flex items-center gap-1.5 sm:gap-2">
         <button id="btn-toggle-voice" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-600 text-white font-semibold text-xs border border-sky-400/40">
           <span class="relative flex h-2 w-2">
@@ -201,7 +216,7 @@
           <span id="font-val" class="font-mono text-[10px] text-slate-300 w-4 text-right">32</span>
         </div>
 
-        <button id="btn-mirror-h" title="Modo Espejo Óptico (M)" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-mono text-xs">↔</button>
+        <button id="btn-mirror-h" title="Espejo Horizontal (M)" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-mono text-xs">↔</button>
         <button id="btn-fullscreen" title="Pantalla Completa (F)" class="p-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0 0l-5-5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
         </button>
@@ -215,14 +230,22 @@
     </div>
   </header>
 
-  <!-- ================= NOTAS TÉCNICAS Y GUÍA DE BANDA ================= -->
-  <div id="band-notes-banner" class="w-full bg-gradient-to-r from-amber-950/80 via-slate-900/95 to-amber-950/80 backdrop-blur border-b border-amber-500/30 text-amber-200 text-xs px-3 sm:px-6 py-2 shrink-0 z-40 relative shadow-md">
-    <div class="max-w-5xl mx-auto flex items-center justify-between gap-2">
+  <!-- ================= BARRA DE GUÍA / NOTAS DE BANDA ================= -->
+  <div id="band-notes-banner" class="w-full bg-gradient-to-r from-amber-950/85 via-slate-900/95 to-amber-950/85 backdrop-blur border-b border-amber-500/40 text-amber-200 text-xs px-3 sm:px-6 py-2 shrink-0 z-40 relative shadow-md">
+    <div class="max-w-5xl mx-auto flex items-center justify-between gap-3">
       <div class="flex items-center gap-2 truncate pr-2">
-        <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono font-bold text-[10px] uppercase border border-amber-500/40 shrink-0">BANDA</span>
-        <span id="band-notes-text" class="font-medium text-slate-200 text-xs truncate">Tono: Sol Mayor (G) • Intro: 4 compases de Teclado • Entrada en el compás 5</span>
+        <span class="px-1.5 py-0.5 rounded bg-amber-500/25 text-amber-300 font-mono font-bold text-[10px] uppercase border border-amber-500/50 shrink-0">
+          📌 GUÍA
+        </span>
+        <span id="band-notes-text" class="font-medium text-slate-200 text-xs sm:text-sm truncate">
+          Tono: Sol Mayor (G) • Intro: 4 compases de Teclado • Entrada en compás 5
+        </span>
       </div>
-      <button id="btn-toggle-notes-view" class="text-amber-400 hover:text-amber-300 underline text-[11px] font-semibold shrink-0">Ocultar</button>
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="btn-toggle-notes-view" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 text-[11px] font-medium transition">
+          Ocultar
+        </button>
+      </div>
     </div>
   </div>
 
@@ -239,10 +262,10 @@
       Línea de lectura: 32%
     </div>
 
-    <!-- Franja Guía Focal Interactiva (Arrastrable con el dedo o ratón) -->
+    <!-- Franja Guía Focal de Lectura (Arrastrable con dedo o ratón) -->
     <div id="guide-overlay" class="absolute left-0 right-0 z-30 flex items-center justify-between px-2 sm:px-6 transition-[top] duration-75" style="top: 32%;">
       <div id="handle-left" class="guide-drag-handle flex items-center gap-1 p-2" title="Arrastra para mover la altura focal">
-        <div class="w-0 h-0 border-y-[12px] border-y-transparent border-l-[18px] border-l-sky-500 drop-shadow-[0_0_8px_rgba(14,165,233,0.85)]"></div>
+        <div class="w-0 h-0 border-y-[12px] border-y-transparent border-l-[18px] border-l-sky-500 drop-shadow-[0_0_8px_rgba(14,165,233,0.9)]"></div>
         <div class="hidden sm:block h-[2px] w-8 bg-gradient-to-r from-sky-500 to-transparent"></div>
       </div>
 
@@ -252,14 +275,14 @@
 
       <div id="handle-right" class="guide-drag-handle flex items-center gap-1 p-2" title="Arrastra para mover la altura focal">
         <div class="hidden sm:block h-[2px] w-8 bg-gradient-to-l from-sky-500 to-transparent"></div>
-        <div class="w-0 h-0 border-y-[12px] border-y-transparent border-r-[18px] border-r-sky-500 drop-shadow-[0_0_8px_rgba(14,165,233,0.85)]"></div>
+        <div class="w-0 h-0 border-y-[12px] border-y-transparent border-r-[18px] border-r-sky-500 drop-shadow-[0_0_8px_rgba(14,165,233,0.9)]"></div>
       </div>
     </div>
 
     <!-- Contenedor con Scroll de Texto y Acordes -->
     <div id="scroll-wrapper" class="w-full h-full overflow-y-scroll no-scrollbar cursor-grab active:cursor-grabbing music-font">
       <div id="teleprompter-content" class="max-w-4xl mx-auto px-4 sm:px-12 text-left text-slate-100 font-bold leading-relaxed transition-transform duration-200">
-        <!-- Generado dinámicamente con acordes alineados -->
+        <!-- Inyección con parser armónico de sílabas completas -->
       </div>
     </div>
 
@@ -276,7 +299,45 @@
 
   </main>
 
-  <!-- ================= MODAL DE EDICIÓN DEL REPERTORIO ================= -->
+  <!-- ================= MODAL AUTO-CUE (AVANCE AUTOMÁTICO ENTRE TEMAS) ================= -->
+  <div id="autocue-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border-2 border-sky-500 rounded-2xl max-w-md w-full p-6 text-center shadow-2xl space-y-4">
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-sky-500/20 text-sky-400 text-2xl">
+        🎵
+      </div>
+      <h3 class="text-lg font-black text-white uppercase tracking-wider">¡Tema Completado!</h3>
+      <p class="text-xs text-slate-400">Excelente. Preparando siguiente tema del repertorio...</p>
+
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-left space-y-1">
+        <div class="text-[10px] font-mono uppercase text-sky-400 font-bold tracking-wider">Siguiente tema:</div>
+        <div id="autocue-next-title" class="text-sm sm:text-base font-bold text-white truncate">Nombre del tema</div>
+        <div id="autocue-next-notes" class="text-xs text-amber-300 truncate">Tono: C • BPM: 120</div>
+      </div>
+
+      <!-- Barra de progreso de cuenta regresiva -->
+      <div class="space-y-1 text-left">
+        <div class="flex justify-between text-[11px] text-slate-400 font-mono">
+          <span>Avanzando en:</span>
+          <span id="autocue-countdown" class="font-bold text-sky-400">4s</span>
+        </div>
+        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+          <div id="autocue-bar" class="bg-sky-500 h-full w-full transition-all duration-1000 ease-linear"></div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-center gap-2.5 pt-1">
+        <button id="btn-autocue-stay" class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">
+          Quedarme aquí
+        </button>
+        <button id="btn-autocue-now" class="px-5 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs shadow-lg shadow-sky-950/60 flex items-center gap-1">
+          <span>Pasar ahora (Espacio)</span>
+          <span>→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL DEL REPERTORIO ================= -->
   <div id="setlist-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-6 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-4xl flex flex-col max-h-[92vh] shadow-2xl overflow-hidden">
       
@@ -284,8 +345,8 @@
         <div class="flex items-center gap-2">
           <span class="text-sky-400 text-lg">🎵</span>
           <div>
-            <h3 class="font-bold text-slate-100 text-sm sm:text-base">Repertorio & Letras Armónicas</h3>
-            <p class="text-[10px] sm:text-xs text-slate-400">Usa corchetes como [G] o [Am7] para indicar acordes sobre cada palabra</p>
+            <h3 class="font-bold text-slate-100 text-sm sm:text-base">Repertorio & Cifrado Armónico</h3>
+            <p class="text-[10px] sm:text-xs text-slate-400">Coloca acordes entre corchetes [D] o paréntesis (D) dentro o antes de cada palabra</p>
           </div>
         </div>
         <button id="btn-close-setlist" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
@@ -293,7 +354,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-12 flex-1 overflow-hidden">
         
-        <!-- Lista de temas -->
+        <!-- Lista de canciones -->
         <div class="md:col-span-5 border-b md:border-b-0 md:border-r border-slate-800 p-3 flex flex-col gap-2 overflow-hidden bg-slate-900/50">
           <div class="flex items-center justify-between text-xs font-semibold text-slate-400 uppercase">
             <span>Canciones (<span id="song-count">0</span>)</span>
@@ -319,13 +380,14 @@
             <input type="number" id="edit-song-bpm" class="col-span-4 px-2 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-xs font-mono focus:outline-none focus:border-sky-500" placeholder="BPM (ej: 80)">
           </div>
 
-          <input type="text" id="edit-song-notes" class="w-full px-3 py-1.5 bg-slate-900 border border-amber-500/30 rounded-lg text-amber-200 text-xs focus:outline-none focus:border-amber-500" placeholder="Notas de Banda: Tono, Intro, Cantidad de compases...">
+          <input type="text" id="edit-song-notes" class="w-full px-3 py-1.5 bg-slate-900 border border-amber-500/30 rounded-lg text-amber-200 text-xs focus:outline-none focus:border-amber-500" placeholder="Guía de Banda: Tono, Intro, compases, entrada...">
 
           <div class="flex-1 flex flex-col overflow-hidden">
-            <label class="text-[10px] text-slate-400 mb-1">Letra con cifrado [Acorde] y secciones instrumentales:</label>
+            <label class="text-[10px] text-slate-400 mb-1">Letra con acordes ([D] o (D)) y secciones:</label>
             <textarea id="edit-song-content" class="w-full flex-1 p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 music-font text-xs leading-relaxed focus:outline-none focus:border-sky-500 resize-none min-h-[120px]" placeholder="Ejemplo:
-[G]Nace una [D/F#]flor, todos los [Em]días sale el [C]sol
-[Instrumental: Solo de Guitarra - 4 compases]"></textarea>
+De [G]vez en cuando ade[D]más, alguien se [C]suele enamo[G]rar
+[Instrumental: Solo de Teclado - 4 compases]
+Pero jamás po[C]drán matar la liber[G]tad"></textarea>
           </div>
 
           <div class="flex items-center justify-between pt-1">
@@ -346,18 +408,18 @@
     </div>
   </div>
 
-  <!-- Toast -->
+  <!-- Toast de Notificaciones -->
   <div id="toast" class="fixed top-12 left-1/2 -translate-x-1/2 bg-slate-800/95 border border-slate-700 text-slate-100 text-xs px-4 py-1.5 rounded-full shadow-2xl pointer-events-none transition-all duration-300 opacity-0 -translate-y-2 z-50"></div>
 
   <!-- ================= LÓGICA DE LA APLICACIÓN ================= -->
   <script>
-    // Repertorio inicial con cifrado estándar anglosajón / latino integrado
+    // Repertorio con acordes integrados directamente en sílabas internas
     const INITIAL_SETLIST = [
       {
         id: "song_1",
         title: "1. Inconsciente Colectivo (Charly García)",
         bpm: 76,
-        notes: "Tono: Sol Mayor (G) • Intro: 4 compases de Teclado • Entrada de voz en compás 5",
+        notes: "Tono: Sol Mayor (G) • Intro: 4 compases de Teclado • Entrada en compás 5",
         content: `[G]Nace una [D/F#]flor, todos los [Em]días sale el [C]sol
 De [G]vez en cuando ade[D]más, alguien se [C]suele enamo[G]rar
 [Instrumental: Frase melódica de Piano - 2 compases]
@@ -403,11 +465,11 @@ Que me estoy mu[C]riendo de [G]frío`
       }
     ];
 
-    // Escalas para motor de transposición cromática
+    // Escalas cromáticas para transposición armónica
     const CHROMATIC_SCALE = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
     const FLAT_MAP = { "Db": "C#", "Eb": "D#", "Gb": "F#", "Ab": "G#", "Bb": "A#" };
 
-    // Estado general
+    // Estado principal
     const state = {
       setlist: [...INITIAL_SETLIST],
       currentSongIndex: 0,
@@ -422,14 +484,16 @@ Que me estoy mu[C]riendo de [G]frío`
       scrollPos: 0,
       mirrorH: false,
       currentWordIndex: 0,
+      isSongFinished: false,
+      isGuideVisible: true,
       animId: null,
       metroInterval: null,
-      isNotesCollapsed: false
+      autoCueTimer: null,
     };
 
     let wordObjects = [];
 
-    // Referencias DOM
+    // Referencias al DOM
     const teleprompterContent = document.getElementById('teleprompter-content');
     const scrollWrapper = document.getElementById('scroll-wrapper');
     const stageElement = document.getElementById('teleprompter-stage');
@@ -445,6 +509,7 @@ Que me estoy mu[C]riendo de [G]frío`
     const btnTransposeUp = document.getElementById('btn-transpose-up');
     const btnTransposeDown = document.getElementById('btn-transpose-down');
     const btnToggleChords = document.getElementById('btn-toggle-chords');
+    const btnHeaderToggleGuide = document.getElementById('btn-header-toggle-guide');
     const btnToggleVoice = document.getElementById('btn-toggle-voice');
     const voiceModeLabel = document.getElementById('voice-mode-label');
     const micPing = document.getElementById('mic-ping');
@@ -484,9 +549,17 @@ Que me estoy mu[C]riendo de [G]frío`
     const detectedTranscript = document.getElementById('detected-transcript');
     const toast = document.getElementById('toast');
 
+    // Elementos del Modal Auto-Cue
+    const autocueModal = document.getElementById('autocue-modal');
+    const autocueNextTitle = document.getElementById('autocue-next-title');
+    const autocueNextNotes = document.getElementById('autocue-next-notes');
+    const autocueCountdown = document.getElementById('autocue-countdown');
+    const autocueBar = document.getElementById('autocue-bar');
+    const btnAutocueStay = document.getElementById('btn-autocue-stay');
+    const btnAutocueNow = document.getElementById('btn-autocue-now');
+
     let editingSongId = null;
 
-    // Notificaciones
     function showToast(msg) {
       toast.textContent = msg;
       toast.classList.remove('opacity-0', '-translate-y-2');
@@ -494,13 +567,12 @@ Que me estoy mu[C]riendo de [G]frío`
       setTimeout(() => {
         toast.classList.remove('opacity-100', 'translate-y-0');
         toast.classList.add('opacity-0', '-translate-y-2');
-      }, 2200);
+      }, 2400);
     }
 
     // ================= MOTOR DE TRANSPOSICIÓN ARMÓNICA =================
     function transposeChord(chord, semitones) {
-      if (semitones === 0) return chord;
-      // Reemplaza tanto la nota base como el bajo alternativo en acordes invertidos como D/F#
+      if (!chord || semitones === 0) return chord;
       return chord.replace(/([A-G][b#]?)/g, (match) => {
         let note = FLAT_MAP[match] || match;
         let idx = CHROMATIC_SCALE.indexOf(note);
@@ -511,12 +583,45 @@ Que me estoy mu[C]riendo de [G]frío`
       });
     }
 
-    // ================= PARSER DE LETRAS CON CIFRADO INLINE =================
+    // ================= PARSER DE ACORDES Y SÍLABAS =================
     function cleanWord(str) {
       if (!str) return "";
       return str.toLowerCase()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         .replace(/[^a-z0-9]/g, "");
+    }
+
+    // Parsea una palabra que puede tener acordes dentro: "ade[D]más" o "ade(D)mas"
+    function parseWordSegments(wordToken) {
+      // Normaliza acordes entre paréntesis como (D) o (Am7) a formato corchetes [D]
+      const normalized = wordToken.replace(/\(([A-G][b#]?(?:m|maj|min|dim|aug|sus|add)?[0-9]*(?:\/[A-G][b#]?)?)\)/gi, '[$1]');
+      
+      const segments = [];
+      const regex = /\[([^\]]+)\]|([^\[\]]+)/g;
+      let match;
+      let pendingChord = null;
+
+      while ((match = regex.exec(normalized)) !== null) {
+        if (match[1] !== undefined) {
+          pendingChord = match[1];
+        } else if (match[2] !== undefined) {
+          segments.push({
+            chord: pendingChord,
+            text: match[2]
+          });
+          pendingChord = null;
+        }
+      }
+
+      // Si había un acorde al final de la palabra sin sílaba posterior
+      if (pendingChord !== null) {
+        segments.push({
+          chord: pendingChord,
+          text: ""
+        });
+      }
+
+      return segments;
     }
 
     function renderCurrentSong() {
@@ -525,17 +630,22 @@ Que me estoy mu[C]riendo de [G]frío`
 
       bpmDisplay.textContent = song.bpm || 80;
       bandNotesText.textContent = song.notes || "Sin notas técnicas registradas";
-      if (!song.notes || !song.notes.trim()) {
-        bandNotesBanner.classList.add('banner-collapsed');
-      } else if (!state.isNotesCollapsed) {
+      
+      // Control de la barra de guía
+      if (state.isGuideVisible && song.notes && song.notes.trim()) {
         bandNotesBanner.classList.remove('banner-collapsed');
+        btnToggleNotesView.textContent = "Ocultar";
+      } else {
+        bandNotesBanner.classList.add('banner-collapsed');
+        btnToggleNotesView.textContent = "Ver notas";
       }
 
       teleprompterContent.innerHTML = '';
       wordObjects = [];
       state.currentWordIndex = 0;
+      state.isSongFinished = false;
 
-      // Espaciador superior basado en la línea de lectura
+      // Espaciador superior vinculado a la altura focal
       const topSpacer = document.createElement('div');
       topSpacer.id = 'top-spacer';
       topSpacer.style.height = `${state.guidePosition}vh`;
@@ -553,75 +663,84 @@ Que me estoy mu[C]riendo de [G]frío`
           return;
         }
 
-        // Detección de bloques de solos o secciones instrumentales
-        if (trimmed.startsWith('[Instrumental') || trimmed.startsWith('[Solo') || trimmed.startsWith('[Intro') || trimmed.startsWith('[Puente')) {
+        // Reconocimiento de bloques instrumentales (Solo, Intro, Puente, etc.)
+        if (trimmed.startsWith('[Instrumental') || trimmed.startsWith('[Solo') || trimmed.startsWith('[Intro') || trimmed.startsWith('[Puente') || trimmed.startsWith('(Solo')) {
           const cue = document.createElement('div');
           cue.className = 'section-cue';
-          cue.innerHTML = `<strong>🎸 SECCIÓN:</strong> ${trimmed.replace(/[\[\]]/g, '')}`;
+          cue.innerHTML = `<strong>🎸 SECCIÓN:</strong> ${trimmed.replace(/[\[\]\(\)]/g, '')}`;
           teleprompterContent.appendChild(cue);
           return;
         }
 
         const lineContainer = document.createElement('div');
-        lineContainer.className = 'flex flex-wrap items-end gap-x-2 my-1.5 leading-snug';
+        lineContainer.className = 'flex flex-wrap items-end my-1 sm:my-1.5 leading-snug';
 
-        // Parser regex: detecta [Acorde], palabras o espacios
-        const tokenRegex = /\[(.*?)\]|([^\s\[]+)|(\s+)/g;
-        let match;
-        let pendingChord = null;
+        // Separa por palabras respetando los espacios intermedios
+        const tokens = line.split(/(\s+)/);
 
-        while ((match = tokenRegex.exec(line)) !== null) {
-          if (match[1]) {
-            // Acorde capturado
-            pendingChord = transposeChord(match[1], state.transposeSemi);
-          } else if (match[2]) {
-            // Palabra cantable
-            const wordCol = document.createElement('div');
-            wordCol.className = 'inline-flex flex-col items-start';
+        tokens.forEach(tok => {
+          if (tok.trim() === '') {
+            const spaceEl = document.createElement('span');
+            spaceEl.className = 'inline-block w-2 sm:w-3 select-none';
+            spaceEl.innerHTML = '&nbsp;';
+            lineContainer.appendChild(spaceEl);
+            return;
+          }
 
-            // Elemento para acorde sobre la palabra
+          const segments = parseWordSegments(tok);
+          const fullWordText = segments.map(s => s.text).join('');
+          const cleaned = cleanWord(fullWordText);
+
+          // Contenedor principal de la palabra completa (se ilumina junta)
+          const wordEl = document.createElement('span');
+          wordEl.className = 'prompter-word word-upcoming';
+          wordEl.dataset.index = globalWordIdx;
+
+          segments.forEach(seg => {
+            const segCol = document.createElement('span');
+            segCol.className = 'inline-flex flex-col items-start leading-none';
+
+            // Acorde transportado
             if (state.showChords) {
               const chordTag = document.createElement('span');
               chordTag.className = 'chord-badge';
-              chordTag.textContent = pendingChord || '\u00A0';
-              wordCol.appendChild(chordTag);
+              if (seg.chord) {
+                chordTag.textContent = transposeChord(seg.chord, state.transposeSemi);
+              } else {
+                chordTag.classList.add('invisible');
+                chordTag.innerHTML = '&nbsp;';
+              }
+              segCol.appendChild(chordTag);
             }
 
-            const wordSpan = document.createElement('span');
-            wordSpan.className = 'prompter-word word-upcoming';
-            wordSpan.textContent = match[2];
-            wordSpan.dataset.index = globalWordIdx;
+            if (seg.text) {
+              const textSpan = document.createElement('span');
+              textSpan.textContent = seg.text;
+              segCol.appendChild(textSpan);
+            }
 
+            wordEl.appendChild(segCol);
+          });
+
+          if (cleaned.length > 0) {
             wordObjects.push({
               index: globalWordIdx,
-              raw: match[2],
-              clean: cleanWord(match[2]),
-              el: wordSpan
+              raw: fullWordText,
+              clean: cleaned,
+              el: wordEl
             });
-
-            wordCol.appendChild(wordSpan);
-            lineContainer.appendChild(wordCol);
             globalWordIdx++;
-            pendingChord = null;
           }
-        }
 
-        // Acorde colgando al final de la línea sin palabra siguiente
-        if (pendingChord && state.showChords) {
-          const trailCol = document.createElement('div');
-          trailCol.className = 'inline-flex flex-col items-start';
-          const chordTag = document.createElement('span');
-          chordTag.className = 'chord-badge';
-          chordTag.textContent = pendingChord;
-          trailCol.appendChild(chordTag);
-          lineContainer.appendChild(trailCol);
-        }
+          lineContainer.appendChild(wordEl);
+        });
 
         teleprompterContent.appendChild(lineContainer);
       });
 
       const bottomSpacer = document.createElement('div');
-      bottomSpacer.style.height = '75vh';
+      bottomSpacer.id = 'bottom-spacer';
+      bottomSpacer.style.height = '80vh';
       teleprompterContent.appendChild(bottomSpacer);
 
       updateFontSize();
@@ -646,19 +765,19 @@ Que me estoy mu[C]riendo de [G]frío`
         }
       }
 
-      if (state.currentWordIndex >= 2 && !state.isNotesCollapsed) {
-        bandNotesBanner.classList.add('banner-collapsed');
-        state.isNotesCollapsed = true;
-        btnToggleNotesView.textContent = "Ver notas";
-      }
-
       const activeEl = wordObjects[state.currentWordIndex]?.el;
       if (activeEl) {
         centerWordOnGuide(activeEl);
       }
 
       const progress = (state.currentWordIndex / (wordObjects.length - 1)) * 100;
-      progressBar.style.width = `${progress}%`;
+      progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+
+      // Detección garantizada de última palabra cantada
+      if (state.currentWordIndex >= wordObjects.length - 1 && !state.isSongFinished) {
+        state.isSongFinished = true;
+        setTimeout(handleSongFinished, 800);
+      }
     }
 
     function centerWordOnGuide(el) {
@@ -671,6 +790,79 @@ Que me estoy mu[C]riendo de [G]frío`
         behavior: 'smooth'
       });
     }
+
+    // ================= AUTO-CUE: TRANSICIÓN INTELIGENTE =================
+    function handleSongFinished() {
+      stopPrompter();
+
+      if (state.currentSongIndex < state.setlist.length - 1) {
+        const nextSong = state.setlist[state.currentSongIndex + 1];
+        autocueNextTitle.textContent = nextSong.title;
+        autocueNextNotes.textContent = nextSong.notes || `BPM: ${nextSong.bpm || 80}`;
+
+        let secondsLeft = 4;
+        autocueCountdown.textContent = `${secondsLeft}s`;
+        autocueBar.style.width = '100%';
+
+        autocueModal.classList.remove('hidden');
+
+        clearInterval(state.autoCueTimer);
+        state.autoCueTimer = setInterval(() => {
+          secondsLeft--;
+          if (secondsLeft > 0) {
+            autocueCountdown.textContent = `${secondsLeft}s`;
+            autocueBar.style.width = `${(secondsLeft / 4) * 100}%`;
+          } else {
+            clearInterval(state.autoCueTimer);
+            autocueModal.classList.add('hidden');
+            advanceToNextSong();
+          }
+        }, 1000);
+      } else {
+        showToast('🎉 ¡Has llegado al final del repertorio!');
+      }
+    }
+
+    function advanceToNextSong() {
+      if (state.currentSongIndex < state.setlist.length - 1) {
+        clearInterval(state.autoCueTimer);
+        autocueModal.classList.add('hidden');
+        state.currentSongIndex++;
+        state.transposeSemi = 0;
+        transposeIndicator.textContent = "0";
+        renderCurrentSong();
+        rewind();
+        showToast(`Cargado: ${state.setlist[state.currentSongIndex].title}`);
+      }
+    }
+
+    btnAutocueNow.addEventListener('click', advanceToNextSong);
+    btnAutocueStay.addEventListener('click', () => {
+      clearInterval(state.autoCueTimer);
+      autocueModal.classList.add('hidden');
+      showToast('Permaneciendo en el tema actual');
+    });
+
+    // ================= CONTROL DE LA GUÍA DE BANDA =================
+    function toggleBandGuide(force) {
+      if (typeof force === 'boolean') state.isGuideVisible = force;
+      else state.isGuideVisible = !state.isGuideVisible;
+
+      if (state.isGuideVisible) {
+        bandNotesBanner.classList.remove('banner-collapsed');
+        btnToggleNotesView.textContent = "Ocultar";
+        btnHeaderToggleGuide.classList.add('bg-amber-900', 'text-amber-200');
+        showToast('Guía visible');
+      } else {
+        bandNotesBanner.classList.add('banner-collapsed');
+        btnToggleNotesView.textContent = "Ver notas";
+        btnHeaderToggleGuide.classList.remove('bg-amber-900', 'text-amber-200');
+        showToast('Guía oculta');
+      }
+    }
+
+    btnToggleNotesView.addEventListener('click', () => toggleBandGuide());
+    btnHeaderToggleGuide.addEventListener('click', () => toggleBandGuide());
 
     // ================= METRÓNOMO AUDIBLE Y VISUAL =================
     let audioCtx = null;
@@ -686,12 +878,12 @@ Que me estoy mu[C]riendo de [G]frío`
         osc.connect(gain);
         gain.connect(audioCtx.destination);
 
-        osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+        osc.frequency.setValueAtTime(1050, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
 
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.05);
+        osc.stop(audioCtx.currentTime + 0.04);
       } catch (e) {}
     }
 
@@ -709,7 +901,7 @@ Que me estoy mu[C]riendo de [G]frío`
         setTimeout(() => {
           metroLight.classList.remove('bg-sky-400');
           metroLight.classList.add('bg-slate-600');
-        }, 90);
+        }, 85);
       }, intervalMs);
     }
 
@@ -724,11 +916,48 @@ Que me estoy mu[C]riendo de [G]frío`
     btnAudioClick.addEventListener('click', () => {
       state.audioClickEnabled = !state.audioClickEnabled;
       btnAudioClick.textContent = state.audioClickEnabled ? '🔊' : '🔈';
-      showToast(state.audioClickEnabled ? 'Claqueta de audio activada' : 'Claqueta de audio silenciada');
+      showToast(state.audioClickEnabled ? 'Claqueta sonora activada' : 'Claqueta silenciada');
     });
 
-    // ================= RECONOCIMIENTO DE VOZ =================
+    // ================= RECONOCIMIENTO DE VOZ ROBUSTO =================
     let recognition = null;
+
+    function levenshteinDistance(a, b) {
+      if (a === b) return 0;
+      if (!a.length) return b.length;
+      if (!b.length) return a.length;
+
+      const matrix = [];
+      for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+      for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+
+      for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+          if (b.charAt(i - 1) === a.charAt(j - 1)) {
+            matrix[i][j] = matrix[i - 1][j - 1];
+          } else {
+            matrix[i][j] = Math.min(
+              matrix[i - 1][j - 1] + 1,
+              matrix[i][j - 1] + 1,
+              matrix[i - 1][j] + 1
+            );
+          }
+        }
+      }
+      return matrix[b.length][a.length];
+    }
+
+    function isWordMatch(target, spoken) {
+      if (!target || !spoken) return false;
+      if (target === spoken) return true;
+      if (spoken.length >= 3 && target.startsWith(spoken)) return true;
+      if (target.length >= 4 && spoken.startsWith(target)) return true;
+
+      const maxLen = Math.max(target.length, spoken.length);
+      if (maxLen <= 3) return target === spoken;
+      const dist = levenshteinDistance(target, spoken);
+      return (dist <= 1 && maxLen <= 5) || (dist <= 2 && maxLen >= 6);
+    }
 
     function initSpeech() {
       const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -753,20 +982,31 @@ Que me estoy mu[C]riendo de [G]frío`
         for (let i = e.resultIndex; i < e.results.length; i++) {
           transcript += e.results[i][0].transcript + " ";
         }
-        const words = transcript.trim().split(/\s+/).map(cleanWord).filter(w => w.length > 0);
-        if (words.length === 0) return;
+        const spokenTokens = transcript.trim().split(/\s+/).map(cleanWord).filter(w => w.length > 0);
+        if (spokenTokens.length === 0) return;
 
-        const lastWord = words[words.length - 1];
-        detectedTranscript.textContent = `"${lastWord}"`;
+        detectedTranscript.textContent = `"${spokenTokens[spokenTokens.length - 1]}"`;
 
-        // Búsqueda en ventana de texto
-        const start = state.currentWordIndex;
-        const limit = Math.min(start + 12, wordObjects.length);
-        for (let i = start; i < limit; i++) {
-          if (wordObjects[i].clean === lastWord || (lastWord.length >= 4 && wordObjects[i].clean.startsWith(lastWord))) {
-            highlightWords(i);
-            break;
+        const startIdx = state.currentWordIndex;
+        const lookAhead = Math.min(startIdx + 14, wordObjects.length);
+        let foundIdx = -1;
+
+        // Búsqueda en reversa para encontrar la palabra más avanzada que se haya cantado
+        for (let s = spokenTokens.length - 1; s >= 0; s--) {
+          const spk = spokenTokens[s];
+          if (spk.length < 2) continue;
+
+          for (let i = startIdx; i < lookAhead; i++) {
+            if (isWordMatch(wordObjects[i].clean, spk)) {
+              foundIdx = i;
+              break;
+            }
           }
+          if (foundIdx !== -1) break;
+        }
+
+        if (foundIdx !== -1) {
+          highlightWords(foundIdx);
         }
       };
 
@@ -776,7 +1016,7 @@ Que me estoy mu[C]riendo de [G]frío`
             if (state.isPlaying && state.isVoiceMode) {
               try { recognition.start(); } catch(err){}
             }
-          }, 150);
+          }, 120);
         } else {
           micPing.classList.add('hidden');
           micDot.classList.replace('bg-emerald-400', 'bg-slate-400');
@@ -792,7 +1032,7 @@ Que me estoy mu[C]riendo de [G]frío`
         if (state.isPlaying && recognition) {
           try { recognition.start(); } catch(e){}
         }
-        showToast('Modo de seguimiento por voz');
+        showToast('Seguimiento por voz activado');
       } else {
         btnToggleVoice.classList.replace('bg-sky-600', 'bg-slate-800');
         voiceModeLabel.textContent = 'Voz: OFF';
@@ -800,13 +1040,13 @@ Que me estoy mu[C]riendo de [G]frío`
           try { recognition.stop(); } catch(e){}
         }
         detectedTranscript.textContent = "Modo Continuo";
-        showToast('Modo de avance continuo');
+        showToast('Modo de velocidad continua');
       }
     }
 
     btnToggleVoice.addEventListener('click', () => setVoiceMode(!state.isVoiceMode));
 
-    // Desplazamiento continuo de respaldo
+    // Desplazamiento continuo constante
     function continuousStep() {
       if (!state.isPlaying || state.isVoiceMode) return;
 
@@ -827,7 +1067,7 @@ Que me estoy mu[C]riendo de [G]frío`
 
       if (scrollWrapper.scrollTop + scrollWrapper.clientHeight >= scrollWrapper.scrollHeight - 6) {
         stopPrompter();
-        showToast('Fin del tema');
+        handleSongFinished();
         return;
       }
 
@@ -872,14 +1112,19 @@ Que me estoy mu[C]riendo de [G]frío`
     }
 
     btnTogglePlay.addEventListener('click', togglePlay);
-    btnRewind.addEventListener('click', () => {
+
+    function rewind() {
       stopPrompter();
       highlightWords(0);
       scrollWrapper.scrollTo({ top: 0, behavior: 'smooth' });
-      bandNotesBanner.classList.remove('banner-collapsed');
-      state.isNotesCollapsed = false;
-      btnToggleNotesView.textContent = "Ocultar";
-      showToast('Rebobinado');
+      state.isSongFinished = false;
+      clearInterval(state.autoCueTimer);
+      autocueModal.classList.add('hidden');
+    }
+
+    btnRewind.addEventListener('click', () => {
+      rewind();
+      showToast('Rebobinado al inicio');
     });
 
     // ================= TRANSPOSICIÓN Y ACORDES =================
@@ -892,13 +1137,13 @@ Que me estoy mu[C]riendo de [G]frío`
     btnTransposeUp.addEventListener('click', () => {
       state.transposeSemi += 1;
       updateTransposeUI();
-      showToast(`Tono transportado: ${transposeIndicator.textContent} semitonos`);
+      showToast(`Tono: ${transposeIndicator.textContent} semitonos`);
     });
 
     btnTransposeDown.addEventListener('click', () => {
       state.transposeSemi -= 1;
       updateTransposeUI();
-      showToast(`Tono transportado: ${transposeIndicator.textContent} semitonos`);
+      showToast(`Tono: ${transposeIndicator.textContent} semitonos`);
     });
 
     btnToggleChords.addEventListener('click', () => {
@@ -909,7 +1154,7 @@ Que me estoy mu[C]riendo de [G]frío`
       renderCurrentSong();
     });
 
-    // ================= ARRASTRE DE LÍNEA GUÍA =================
+    // ================= ARRASTRE DIRECTO DE LÍNEA GUÍA =================
     let isDraggingGuide = false;
 
     function updateGuidePosition(percent, showPill = true) {
@@ -954,7 +1199,7 @@ Que me estoy mu[C]riendo de [G]frío`
 
     guidePosSlider.addEventListener('input', (e) => updateGuidePosition(parseInt(e.target.value), false));
 
-    // ================= GESTIÓN DEL SETLIST =================
+    // ================= GESTIÓN DEL REPERTORIO =================
     function syncSongSelectorUI() {
       selectActiveSong.innerHTML = '';
       state.setlist.forEach((song, idx) => {
@@ -1000,9 +1245,9 @@ Que me estoy mu[C]riendo de [G]frío`
       const newSong = {
         id: "song_" + Date.now(),
         title: `Nuevo Tema (${state.setlist.length + 1})`,
-        bpm: 90,
+        bpm: 85,
         notes: "Tono: C • Intro 4 compases",
-        content: `[C]Escribe la [G]letra con los [Am]acordes entre cor[F]chetes`
+        content: `[C]Escribe la letra con los [G]acordes entre cor[Am]chetes o parénte(F)sis`
       };
       state.setlist.push(newSong);
       selectSongForEditing(state.setlist.length - 1);
@@ -1024,7 +1269,7 @@ Que me estoy mu[C]riendo de [G]frío`
 
     btnDeleteSong.addEventListener('click', () => {
       if (state.setlist.length <= 1) {
-        showToast('Debe existir al menos un tema');
+        showToast('Debe haber al menos un tema');
         return;
       }
       state.setlist = state.setlist.filter(s => s.id !== editingSongId);
@@ -1041,6 +1286,7 @@ Que me estoy mu[C]riendo de [G]frío`
       state.transposeSemi = 0;
       transposeIndicator.textContent = "0";
       renderCurrentSong();
+      rewind();
       setlistModal.classList.add('hidden');
       showToast('Tema cargado');
     });
@@ -1060,6 +1306,7 @@ Que me estoy mu[C]riendo de [G]frío`
       state.transposeSemi = 0;
       transposeIndicator.textContent = "0";
       renderCurrentSong();
+      rewind();
     });
 
     btnPrevSong.addEventListener('click', () => {
@@ -1068,6 +1315,7 @@ Que me estoy mu[C]riendo de [G]frío`
         state.transposeSemi = 0;
         transposeIndicator.textContent = "0";
         renderCurrentSong();
+        rewind();
       }
     });
 
@@ -1077,6 +1325,7 @@ Que me estoy mu[C]riendo de [G]frío`
         state.transposeSemi = 0;
         transposeIndicator.textContent = "0";
         renderCurrentSong();
+        rewind();
       }
     });
 
@@ -1111,7 +1360,7 @@ Que me estoy mu[C]riendo de [G]frío`
       reader.readAsText(file);
     });
 
-    // ================= CONTROLES VISUALES =================
+    // ================= AJUSTES VISUALES =================
     function updateFontSize() {
       teleprompterContent.style.fontSize = `${state.fontSize}px`;
       fontVal.textContent = state.fontSize;
@@ -1138,13 +1387,7 @@ Que me estoy mu[C]riendo de [G]frío`
       updateTransformations();
     });
 
-    btnToggleNotesView.addEventListener('click', () => {
-      state.isNotesCollapsed = !state.isNotesCollapsed;
-      bandNotesBanner.classList.toggle('banner-collapsed', state.isNotesCollapsed);
-      btnToggleNotesView.textContent = state.isNotesCollapsed ? "Ver notas" : "Ocultar";
-    });
-
-    // Pantalla Completa
+    // Modo Pantalla Completa
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(() => {
@@ -1158,7 +1401,7 @@ Que me estoy mu[C]riendo de [G]frío`
     btnFullscreen.addEventListener('click', toggleFullScreen);
     btnExitFocus.addEventListener('click', () => document.body.classList.remove('focus-mode'));
 
-    // Clic directo sobre una palabra para reubicar el punto de lectura
+    // Clic directo en una palabra para saltar a ella
     teleprompterContent.addEventListener('click', (e) => {
       const word = e.target.closest('.prompter-word');
       if (word && word.dataset.index) {
@@ -1172,7 +1415,11 @@ Que me estoy mu[C]riendo de [G]frío`
 
       if (e.code === 'Space') {
         e.preventDefault();
-        togglePlay();
+        if (!autocueModal.classList.contains('hidden')) {
+          advanceToNextSong();
+        } else {
+          togglePlay();
+        }
       } else if (e.key === 'r' || e.key === 'R') {
         btnRewind.click();
       } else if (e.key === 'v' || e.key === 'V') {
@@ -1187,10 +1434,12 @@ Que me estoy mu[C]riendo de [G]frío`
         btnPrevSong.click();
       } else if (e.key === ']' || e.key === 'n' || e.key === 'N') {
         btnNextSong.click();
+      } else if (e.key === 'g' || e.key === 'G') {
+        toggleBandGuide();
       }
     });
 
-    // Inicialización al cargar la página
+    // Inicio
     window.addEventListener('DOMContentLoaded', () => {
       renderCurrentSong();
       initSpeech();
