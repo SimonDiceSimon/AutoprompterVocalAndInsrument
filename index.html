@@ -33,7 +33,7 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Efectos de espejo para teleprompter de cristal */
+    /* Efectos de espejo óptico */
     .flip-x { transform: scaleX(-1); }
     .flip-y { transform: scaleY(-1); }
     .flip-both { transform: scale(-1, -1); }
@@ -42,12 +42,12 @@
       box-shadow: 0 0 35px rgba(14, 165, 233, 0.25);
     }
 
-    /* Tipografía monoespaciada para alineación precisa de compás y acordes */
+    /* Tipografía musical monoespaciada */
     .music-font {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
 
-    /* Etiqueta de acorde flotante sobre sílaba */
+    /* Etiqueta de acorde flotante */
     .chord-badge {
       font-family: inherit;
       font-size: 0.60em;
@@ -62,7 +62,7 @@
       padding-bottom: 2px;
     }
 
-    /* Estructura de la palabra completa */
+    /* Estructura de la palabra cantable */
     .prompter-word {
       font-weight: inherit;
       font-size: inherit;
@@ -83,34 +83,36 @@
     /* 2. Palabra activa en lectura */
     .word-active {
       color: #38bdf8 !important;
-      background-color: rgba(14, 165, 233, 0.12);
-      text-shadow: 0 0 16px rgba(56, 189, 248, 0.9);
+      background-color: rgba(14, 165, 233, 0.15);
+      text-shadow: 0 0 16px rgba(56, 189, 248, 0.95);
       opacity: 1;
     }
 
     /* 3. Palabra ya cantada */
     .word-passed {
       color: #0284c7 !important;
-      opacity: 0.65;
+      opacity: 0.62;
     }
 
     /* Bloques de Solo, Intro o Secciones Instrumentales */
     .section-cue {
       display: block;
-      background: linear-gradient(90deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
+      background: linear-gradient(90deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.92));
       border-left: 4px solid #38bdf8;
-      padding: 6px 14px;
+      padding: 8px 14px;
       margin: 14px 0;
-      border-radius: 4px 8px 8px 4px;
+      border-radius: 6px 10px 10px 6px;
       font-size: 0.72em;
       color: #cbd5e1;
       letter-spacing: 0.04em;
+      border-top: 1px solid rgba(56, 189, 248, 0.2);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.2);
     }
 
-    /* Transición suave para el banner de notas de la banda */
+    /* Transición suave para la Guía de Banda Multilínea */
     #band-notes-banner {
-      transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.25s ease;
-      max-height: 160px;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, padding 0.25s ease;
+      max-height: 280px;
     }
     #band-notes-banner.banner-collapsed {
       max-height: 0 !important;
@@ -194,7 +196,6 @@
           Acordes: ON
         </button>
 
-        <!-- Botón permanente para mostrar/ocultar Guía de Banda -->
         <button id="btn-header-toggle-guide" class="ml-1 px-2 py-0.5 rounded bg-amber-950/80 hover:bg-amber-900 border border-amber-500/50 text-amber-300 font-semibold text-[10px] transition" title="Mostrar u Ocultar la barra de guía técnica">
           📌 Guía
         </button>
@@ -224,25 +225,26 @@
 
     </div>
 
-    <!-- Barra de progreso -->
+    <!-- Barra de progreso superior -->
     <div class="w-full bg-slate-800 h-1">
       <div id="progress-bar" class="bg-gradient-to-r from-sky-500 via-cyan-400 to-indigo-500 h-full w-0 transition-all duration-150"></div>
     </div>
   </header>
 
-  <!-- ================= BARRA DE GUÍA / NOTAS DE BANDA ================= -->
-  <div id="band-notes-banner" class="w-full bg-gradient-to-r from-amber-950/85 via-slate-900/95 to-amber-950/85 backdrop-blur border-b border-amber-500/40 text-amber-200 text-xs px-3 sm:px-6 py-2 shrink-0 z-40 relative shadow-md">
-    <div class="max-w-5xl mx-auto flex items-center justify-between gap-3">
-      <div class="flex items-center gap-2 truncate pr-2">
-        <span class="px-1.5 py-0.5 rounded bg-amber-500/25 text-amber-300 font-mono font-bold text-[10px] uppercase border border-amber-500/50 shrink-0">
+  <!-- ================= BARRA DE GUÍA / NOTAS DE BANDA (MULTILÍNEA RESPONSIVA) ================= -->
+  <div id="band-notes-banner" class="w-full bg-gradient-to-r from-amber-950/90 via-slate-950 to-amber-950/90 backdrop-blur border-b border-amber-500/40 text-amber-200 text-xs px-3 sm:px-6 py-2.5 shrink-0 z-40 relative shadow-lg overflow-y-auto no-scrollbar">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+      <div class="flex items-start gap-2 flex-1 min-w-0">
+        <span class="px-1.5 py-0.5 rounded bg-amber-500/25 text-amber-300 font-mono font-bold text-[10px] uppercase border border-amber-500/50 shrink-0 mt-0.5">
           📌 GUÍA
         </span>
-        <span id="band-notes-text" class="font-medium text-slate-200 text-xs sm:text-sm truncate">
+        <!-- Texto multilínea libre sin truncate para que entre todo el contenido técnico -->
+        <div id="band-notes-text" class="font-medium text-slate-200 text-xs sm:text-sm leading-relaxed whitespace-normal break-words">
           Tono: Sol Mayor (G) • Intro: 4 compases de Teclado • Entrada en compás 5
-        </span>
+        </div>
       </div>
-      <div class="flex items-center gap-2 shrink-0">
-        <button id="btn-toggle-notes-view" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 text-[11px] font-medium transition">
+      <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
+        <button id="btn-toggle-notes-view" class="px-2 py-0.5 rounded bg-slate-800/90 hover:bg-slate-700 text-amber-300 border border-amber-500/30 text-[11px] font-semibold transition">
           Ocultar
         </button>
       </div>
@@ -282,7 +284,7 @@
     <!-- Contenedor con Scroll de Texto y Acordes -->
     <div id="scroll-wrapper" class="w-full h-full overflow-y-scroll no-scrollbar cursor-grab active:cursor-grabbing music-font">
       <div id="teleprompter-content" class="max-w-4xl mx-auto px-4 sm:px-12 text-left text-slate-100 font-bold leading-relaxed transition-transform duration-200">
-        <!-- Inyección con parser armónico de sílabas completas -->
+        <!-- Inyección dinámica estructurada por líneas -->
       </div>
     </div>
 
@@ -299,41 +301,70 @@
 
   </main>
 
-  <!-- ================= MODAL AUTO-CUE (AVANCE AUTOMÁTICO ENTRE TEMAS) ================= -->
-  <div id="autocue-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border-2 border-sky-500 rounded-2xl max-w-md w-full p-6 text-center shadow-2xl space-y-4">
-      <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-sky-500/20 text-sky-400 text-2xl">
-        🎵
-      </div>
-      <h3 class="text-lg font-black text-white uppercase tracking-wider">¡Tema Completado!</h3>
-      <p class="text-xs text-slate-400">Excelente. Preparando siguiente tema del repertorio...</p>
-
-      <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-left space-y-1">
-        <div class="text-[10px] font-mono uppercase text-sky-400 font-bold tracking-wider">Siguiente tema:</div>
-        <div id="autocue-next-title" class="text-sm sm:text-base font-bold text-white truncate">Nombre del tema</div>
-        <div id="autocue-next-notes" class="text-xs text-amber-300 truncate">Tono: C • BPM: 120</div>
-      </div>
-
-      <!-- Barra de progreso de cuenta regresiva -->
-      <div class="space-y-1 text-left">
-        <div class="flex justify-between text-[11px] text-slate-400 font-mono">
-          <span>Avanzando en:</span>
-          <span id="autocue-countdown" class="font-bold text-sky-400">4s</span>
+  <!-- ================= MODAL AUTO-CUE (GRAN ESCALA & 20 SEGUNDOS) ================= -->
+  <div id="autocue-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 hidden">
+    <div class="bg-slate-900/95 border-2 border-sky-500/80 rounded-3xl w-[94vw] sm:w-[88vw] max-w-2xl sm:max-w-3xl p-5 sm:p-8 text-center shadow-2xl space-y-4 sm:space-y-6">
+      
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl sm:text-3xl">🏁</span>
+          <h3 class="text-base sm:text-xl font-black text-white uppercase tracking-wider">Tema Finalizado</h3>
         </div>
-        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-          <div id="autocue-bar" class="bg-sky-500 h-full w-full transition-all duration-1000 ease-linear"></div>
+        <span class="font-mono text-xs text-sky-400 bg-sky-950 px-3 py-1 rounded-full border border-sky-500/40">
+          Auto-Cue Activo
+        </span>
+      </div>
+
+      <!-- Tarjeta destacada del tema que entra -->
+      <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 sm:p-6 text-left space-y-3">
+        <div class="text-[11px] sm:text-xs font-mono uppercase text-sky-400 font-bold tracking-widest">
+          A continuación:
+        </div>
+        
+        <div id="autocue-next-title" class="text-xl sm:text-3xl font-black text-white leading-snug font-mono break-words">
+          Nombre de la Canción
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 pt-1">
+          <span id="autocue-badge-bpm" class="px-2.5 py-1 rounded-lg bg-sky-950/80 text-sky-300 font-mono font-bold text-xs sm:text-sm border border-sky-500/40">
+            80 BPM
+          </span>
+          <span id="autocue-badge-lang" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 font-mono text-xs sm:text-sm border border-slate-700">
+            ES
+          </span>
+        </div>
+
+        <div class="pt-2 border-t border-slate-900">
+          <div class="text-[10px] font-mono uppercase text-amber-400 font-bold">Guía / Intro para la banda:</div>
+          <p id="autocue-next-notes" class="text-xs sm:text-sm text-amber-200/90 font-medium leading-relaxed mt-1">
+            Intro 4 compases • Tono Sol Mayor
+          </p>
         </div>
       </div>
 
-      <div class="flex items-center justify-center gap-2.5 pt-1">
-        <button id="btn-autocue-stay" class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">
-          Quedarme aquí
+      <!-- Barra de progreso y temporizador extendido a 20s -->
+      <div class="space-y-1.5 text-left">
+        <div class="flex justify-between text-xs sm:text-sm text-slate-400 font-mono">
+          <span>Iniciando automáticamente en:</span>
+          <span id="autocue-countdown" class="font-bold text-sky-400 text-sm sm:text-base">20s</span>
+        </div>
+        <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+          <div id="autocue-bar" class="bg-gradient-to-r from-sky-500 to-indigo-500 h-full w-full transition-all duration-1000 ease-linear"></div>
+        </div>
+      </div>
+
+      <!-- Botones de Acción de Escenario -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+        <button id="btn-autocue-stay" class="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs sm:text-sm font-semibold transition order-2 sm:order-1">
+          Pausar / Quedarme aquí
         </button>
-        <button id="btn-autocue-now" class="px-5 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs shadow-lg shadow-sky-950/60 flex items-center gap-1">
-          <span>Pasar ahora (Espacio)</span>
-          <span>→</span>
+
+        <button id="btn-autocue-now" class="w-full sm:flex-1 py-3.5 sm:py-4 px-6 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-sm sm:text-base shadow-xl shadow-sky-950/80 active:scale-95 transition flex items-center justify-center gap-2 order-1 sm:order-2">
+          <span>Siguiente Tema (Espacio)</span>
+          <span class="text-lg">→</span>
         </button>
       </div>
+
     </div>
   </div>
 
@@ -380,7 +411,7 @@
             <input type="number" id="edit-song-bpm" class="col-span-4 px-2 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-xs font-mono focus:outline-none focus:border-sky-500" placeholder="BPM (ej: 80)">
           </div>
 
-          <input type="text" id="edit-song-notes" class="w-full px-3 py-1.5 bg-slate-900 border border-amber-500/30 rounded-lg text-amber-200 text-xs focus:outline-none focus:border-amber-500" placeholder="Guía de Banda: Tono, Intro, compases, entrada...">
+          <textarea id="edit-song-notes" class="w-full px-3 py-1.5 bg-slate-900 border border-amber-500/30 rounded-lg text-amber-200 text-xs focus:outline-none focus:border-amber-500 resize-none h-16" placeholder="Guía de Banda: Tono, Intro, compases, efectos, entradas..."></textarea>
 
           <div class="flex-1 flex flex-col overflow-hidden">
             <label class="text-[10px] text-slate-400 mb-1">Letra con acordes ([D] o (D)) y secciones:</label>
@@ -413,13 +444,12 @@ Pero jamás po[C]drán matar la liber[G]tad"></textarea>
 
   <!-- ================= LÓGICA DE LA APLICACIÓN ================= -->
   <script>
-    // Repertorio con acordes integrados directamente en sílabas internas
     const INITIAL_SETLIST = [
       {
         id: "song_1",
         title: "1. Inconsciente Colectivo (Charly García)",
         bpm: 76,
-        notes: "Tono: Sol Mayor (G) • Intro: 4 compases de Teclado • Entrada en compás 5",
+        notes: "Tono: Sol Mayor (G) • Intro: 4 compases de Teclado • Entrada de voz en compás 5 • Dinámica suave al comienzo y con fuerza en el estribillo",
         content: `[G]Nace una [D/F#]flor, todos los [Em]días sale el [C]sol
 De [G]vez en cuando ade[D]más, alguien se [C]suele enamo[G]rar
 [Instrumental: Frase melódica de Piano - 2 compases]
@@ -435,7 +465,7 @@ Pero jamás po[C]drán matar la liber[G]tad`
         id: "song_2",
         title: "2. Let It Be (The Beatles)",
         bpm: 72,
-        notes: "Clave: Do Mayor (C) • Intro: 2 compases de Piano • Batería entra en Coro 1",
+        notes: "Clave: Do Mayor (C) • Intro: 2 compases de Piano • Batería entra en Coro 1 • Solo de guitarra con overdrive suave",
         content: `When I [C]find myself in [G]times of trouble
 [Am]Mother Mary [F]comes to me
 [C]Speaking words of [G]wisdom, let it [F]be [C]
@@ -465,11 +495,9 @@ Que me estoy mu[C]riendo de [G]frío`
       }
     ];
 
-    // Escalas cromáticas para transposición armónica
     const CHROMATIC_SCALE = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
     const FLAT_MAP = { "Db": "C#", "Eb": "D#", "Gb": "F#", "Ab": "G#", "Bb": "A#" };
 
-    // Estado principal
     const state = {
       setlist: [...INITIAL_SETLIST],
       currentSongIndex: 0,
@@ -492,8 +520,9 @@ Que me estoy mu[C]riendo de [G]frío`
     };
 
     let wordObjects = [];
+    let lineElements = [];
 
-    // Referencias al DOM
+    // Referencias DOM
     const teleprompterContent = document.getElementById('teleprompter-content');
     const scrollWrapper = document.getElementById('scroll-wrapper');
     const stageElement = document.getElementById('teleprompter-stage');
@@ -549,10 +578,11 @@ Que me estoy mu[C]riendo de [G]frío`
     const detectedTranscript = document.getElementById('detected-transcript');
     const toast = document.getElementById('toast');
 
-    // Elementos del Modal Auto-Cue
+    // Elementos Auto-Cue (20s)
     const autocueModal = document.getElementById('autocue-modal');
     const autocueNextTitle = document.getElementById('autocue-next-title');
     const autocueNextNotes = document.getElementById('autocue-next-notes');
+    const autocueBadgeBpm = document.getElementById('autocue-badge-bpm');
     const autocueCountdown = document.getElementById('autocue-countdown');
     const autocueBar = document.getElementById('autocue-bar');
     const btnAutocueStay = document.getElementById('btn-autocue-stay');
@@ -591,11 +621,8 @@ Que me estoy mu[C]riendo de [G]frío`
         .replace(/[^a-z0-9]/g, "");
     }
 
-    // Parsea una palabra que puede tener acordes dentro: "ade[D]más" o "ade(D)mas"
     function parseWordSegments(wordToken) {
-      // Normaliza acordes entre paréntesis como (D) o (Am7) a formato corchetes [D]
       const normalized = wordToken.replace(/\(([A-G][b#]?(?:m|maj|min|dim|aug|sus|add)?[0-9]*(?:\/[A-G][b#]?)?)\)/gi, '[$1]');
-      
       const segments = [];
       const regex = /\[([^\]]+)\]|([^\[\]]+)/g;
       let match;
@@ -613,7 +640,6 @@ Que me estoy mu[C]riendo de [G]frío`
         }
       }
 
-      // Si había un acorde al final de la palabra sin sílaba posterior
       if (pendingChord !== null) {
         segments.push({
           chord: pendingChord,
@@ -629,9 +655,8 @@ Que me estoy mu[C]riendo de [G]frío`
       if (!song) return;
 
       bpmDisplay.textContent = song.bpm || 80;
-      bandNotesText.textContent = song.notes || "Sin notas técnicas registradas";
+      bandNotesText.textContent = song.notes || "Sin especificaciones técnicas registradas";
       
-      // Control de la barra de guía
       if (state.isGuideVisible && song.notes && song.notes.trim()) {
         bandNotesBanner.classList.remove('banner-collapsed');
         btnToggleNotesView.textContent = "Ocultar";
@@ -642,19 +667,19 @@ Que me estoy mu[C]riendo de [G]frío`
 
       teleprompterContent.innerHTML = '';
       wordObjects = [];
+      lineElements = [];
       state.currentWordIndex = 0;
       state.isSongFinished = false;
 
-      // Espaciador superior vinculado a la altura focal
       const topSpacer = document.createElement('div');
       topSpacer.id = 'top-spacer';
       topSpacer.style.height = `${state.guidePosition}vh`;
       teleprompterContent.appendChild(topSpacer);
 
-      const lines = song.content.split('\n');
+      const rawLines = song.content.split('\n');
       let globalWordIdx = 0;
 
-      lines.forEach(line => {
+      rawLines.forEach((line) => {
         const trimmed = line.trim();
         if (trimmed === '') {
           const gap = document.createElement('div');
@@ -663,20 +688,22 @@ Que me estoy mu[C]riendo de [G]frío`
           return;
         }
 
-        // Reconocimiento de bloques instrumentales (Solo, Intro, Puente, etc.)
+        // Reconocimiento de Secciones Instrumentales (Intro, Solo, etc.)
         if (trimmed.startsWith('[Instrumental') || trimmed.startsWith('[Solo') || trimmed.startsWith('[Intro') || trimmed.startsWith('[Puente') || trimmed.startsWith('(Solo')) {
           const cue = document.createElement('div');
           cue.className = 'section-cue';
           cue.innerHTML = `<strong>🎸 SECCIÓN:</strong> ${trimmed.replace(/[\[\]\(\)]/g, '')}`;
           teleprompterContent.appendChild(cue);
+          lineElements.push({ type: 'cue', el: cue });
           return;
         }
 
+        // Contenedor del renglón de canto
         const lineContainer = document.createElement('div');
-        lineContainer.className = 'flex flex-wrap items-end my-1 sm:my-1.5 leading-snug';
+        lineContainer.className = 'prompter-line flex flex-wrap items-end my-1.5 sm:my-2 leading-snug';
 
-        // Separa por palabras respetando los espacios intermedios
         const tokens = line.split(/(\s+)/);
+        const lineWords = [];
 
         tokens.forEach(tok => {
           if (tok.trim() === '') {
@@ -691,7 +718,6 @@ Que me estoy mu[C]riendo de [G]frío`
           const fullWordText = segments.map(s => s.text).join('');
           const cleaned = cleanWord(fullWordText);
 
-          // Contenedor principal de la palabra completa (se ilumina junta)
           const wordEl = document.createElement('span');
           wordEl.className = 'prompter-word word-upcoming';
           wordEl.dataset.index = globalWordIdx;
@@ -700,7 +726,6 @@ Que me estoy mu[C]riendo de [G]frío`
             const segCol = document.createElement('span');
             segCol.className = 'inline-flex flex-col items-start leading-none';
 
-            // Acorde transportado
             if (state.showChords) {
               const chordTag = document.createElement('span');
               chordTag.className = 'chord-badge';
@@ -723,16 +748,25 @@ Que me estoy mu[C]riendo de [G]frío`
           });
 
           if (cleaned.length > 0) {
-            wordObjects.push({
+            const wordObj = {
               index: globalWordIdx,
               raw: fullWordText,
               clean: cleaned,
-              el: wordEl
-            });
+              el: wordEl,
+              lineEl: lineContainer
+            };
+            wordObjects.push(wordObj);
+            lineWords.push(wordObj);
             globalWordIdx++;
           }
 
           lineContainer.appendChild(wordEl);
+        });
+
+        lineElements.push({
+          type: 'lyrics',
+          el: lineContainer,
+          words: lineWords
         });
 
         teleprompterContent.appendChild(lineContainer);
@@ -740,7 +774,7 @@ Que me estoy mu[C]riendo de [G]frío`
 
       const bottomSpacer = document.createElement('div');
       bottomSpacer.id = 'bottom-spacer';
-      bottomSpacer.style.height = '80vh';
+      bottomSpacer.style.height = '85vh';
       teleprompterContent.appendChild(bottomSpacer);
 
       updateFontSize();
@@ -749,7 +783,7 @@ Que me estoy mu[C]riendo de [G]frío`
       syncSongSelectorUI();
     }
 
-    // ================= RESALTADO Y SEGUIMIENTO VOCAL =================
+    // ================= ANTICIPACIÓN PREDICTIVA & CENTRADO =================
     function highlightWords(targetIndex) {
       if (wordObjects.length === 0) return;
       state.currentWordIndex = Math.max(0, Math.min(targetIndex, wordObjects.length - 1));
@@ -765,42 +799,65 @@ Que me estoy mu[C]riendo de [G]frío`
         }
       }
 
-      const activeEl = wordObjects[state.currentWordIndex]?.el;
-      if (activeEl) {
-        centerWordOnGuide(activeEl);
-      }
+      positionFocalView(state.currentWordIndex);
 
       const progress = (state.currentWordIndex / (wordObjects.length - 1)) * 100;
       progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
 
-      // Detección garantizada de última palabra cantada
       if (state.currentWordIndex >= wordObjects.length - 1 && !state.isSongFinished) {
         state.isSongFinished = true;
-        setTimeout(handleSongFinished, 800);
+        setTimeout(handleSongFinished, 600);
       }
     }
 
-    function centerWordOnGuide(el) {
+    // Desplazamiento inteligente: si terminás el verso o viene un solo, la siguiente frase cantable ya está en el centro
+    function positionFocalView(wordIdx) {
+      const currentWord = wordObjects[wordIdx];
+      if (!currentWord) return;
+
       const containerHeight = scrollWrapper.clientHeight;
       const guideY = containerHeight * (state.guidePosition / 100);
-      const targetScroll = el.offsetTop - guideY + (el.offsetHeight / 2);
 
+      // Localizamos en qué línea está la palabra actual
+      const currentLineIdx = lineElements.findIndex(l => l.type === 'lyrics' && l.words && l.words.some(w => w.index === wordIdx));
+      let targetEl = currentWord.el;
+
+      if (currentLineIdx !== -1) {
+        const lineObj = lineElements[currentLineIdx];
+        const wordPosInLine = lineObj.words.findIndex(w => w.index === wordIdx);
+        const isNearEndOfLine = wordPosInLine >= Math.max(1, Math.floor(lineObj.words.length * 0.55));
+
+        // Si ya estás avanzado en el verso, preparamos la siguiente línea cantable
+        if (isNearEndOfLine) {
+          // Buscamos la siguiente línea con texto cantable
+          for (let next = currentLineIdx + 1; next < lineElements.length; next++) {
+            const candidate = lineElements[next];
+            if (candidate.type === 'lyrics' && candidate.words.length > 0) {
+              targetEl = candidate.el;
+              break;
+            }
+          }
+        }
+      }
+
+      const targetScroll = targetEl.offsetTop - guideY + (targetEl.offsetHeight / 2);
       scrollWrapper.scrollTo({
         top: Math.max(0, targetScroll),
         behavior: 'smooth'
       });
     }
 
-    // ================= AUTO-CUE: TRANSICIÓN INTELIGENTE =================
+    // ================= AUTO-CUE: 20 SEGUNDOS CON VISIBILIDAD DE ESCENARIO =================
     function handleSongFinished() {
       stopPrompter();
 
       if (state.currentSongIndex < state.setlist.length - 1) {
         const nextSong = state.setlist[state.currentSongIndex + 1];
         autocueNextTitle.textContent = nextSong.title;
-        autocueNextNotes.textContent = nextSong.notes || `BPM: ${nextSong.bpm || 80}`;
+        autocueNextNotes.textContent = nextSong.notes || "Entrada según estructura";
+        autocueBadgeBpm.textContent = `${nextSong.bpm || 80} BPM`;
 
-        let secondsLeft = 4;
+        let secondsLeft = 20;
         autocueCountdown.textContent = `${secondsLeft}s`;
         autocueBar.style.width = '100%';
 
@@ -811,7 +868,7 @@ Que me estoy mu[C]riendo de [G]frío`
           secondsLeft--;
           if (secondsLeft > 0) {
             autocueCountdown.textContent = `${secondsLeft}s`;
-            autocueBar.style.width = `${(secondsLeft / 4) * 100}%`;
+            autocueBar.style.width = `${(secondsLeft / 20) * 100}%`;
           } else {
             clearInterval(state.autoCueTimer);
             autocueModal.classList.add('hidden');
@@ -819,7 +876,7 @@ Que me estoy mu[C]riendo de [G]frío`
           }
         }, 1000);
       } else {
-        showToast('🎉 ¡Has llegado al final del repertorio!');
+        showToast('🎉 ¡Llegaste al final del repertorio!');
       }
     }
 
@@ -840,10 +897,10 @@ Que me estoy mu[C]riendo de [G]frío`
     btnAutocueStay.addEventListener('click', () => {
       clearInterval(state.autoCueTimer);
       autocueModal.classList.add('hidden');
-      showToast('Permaneciendo en el tema actual');
+      showToast('Pausado en el tema actual');
     });
 
-    // ================= CONTROL DE LA GUÍA DE BANDA =================
+    // ================= CONTROL DE LA BARRA DE GUÍA =================
     function toggleBandGuide(force) {
       if (typeof force === 'boolean') state.isGuideVisible = force;
       else state.isGuideVisible = !state.isGuideVisible;
@@ -991,7 +1048,6 @@ Que me estoy mu[C]riendo de [G]frío`
         const lookAhead = Math.min(startIdx + 14, wordObjects.length);
         let foundIdx = -1;
 
-        // Búsqueda en reversa para encontrar la palabra más avanzada que se haya cantado
         for (let s = spokenTokens.length - 1; s >= 0; s--) {
           const spk = spokenTokens[s];
           if (spk.length < 2) continue;
@@ -1046,7 +1102,6 @@ Que me estoy mu[C]riendo de [G]frío`
 
     btnToggleVoice.addEventListener('click', () => setVoiceMode(!state.isVoiceMode));
 
-    // Desplazamiento continuo constante
     function continuousStep() {
       if (!state.isPlaying || state.isVoiceMode) return;
 
@@ -1387,7 +1442,6 @@ Que me estoy mu[C]riendo de [G]frío`
       updateTransformations();
     });
 
-    // Modo Pantalla Completa
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(() => {
@@ -1401,7 +1455,6 @@ Que me estoy mu[C]riendo de [G]frío`
     btnFullscreen.addEventListener('click', toggleFullScreen);
     btnExitFocus.addEventListener('click', () => document.body.classList.remove('focus-mode'));
 
-    // Clic directo en una palabra para saltar a ella
     teleprompterContent.addEventListener('click', (e) => {
       const word = e.target.closest('.prompter-word');
       if (word && word.dataset.index) {
@@ -1439,7 +1492,7 @@ Que me estoy mu[C]riendo de [G]frío`
       }
     });
 
-    // Inicio
+    // Inicialización
     window.addEventListener('DOMContentLoaded', () => {
       renderCurrentSong();
       initSpeech();
