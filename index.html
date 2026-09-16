@@ -435,18 +435,43 @@
         <div class="flex items-center gap-2">
           <span class="text-sky-400 text-lg">🎵</span>
           <div>
-            <h3 class="font-bold text-slate-100 text-sm sm:text-base">Repertorio & Cifrado Armónico</h3>
-            <p class="text-[10px] sm:text-xs text-slate-400">Coloca acordes entre corchetes [D] o paréntesis (D) dentro o antes de cada palabra</p>
+            <h3 class="font-bold text-slate-100 text-sm sm:text-base">Repertorios & Cifrado Armónico</h3>
+            <p class="text-[10px] sm:text-xs text-slate-400">Guarda múltiples listas de temas y acordes [D] guardados automáticamente</p>
           </div>
         </div>
         <button id="btn-close-setlist" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+      </div>
+
+      <!-- Barra de Gestión de Listas de Temas -->
+      <div class="px-3 sm:px-6 py-2 bg-slate-900/90 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="font-semibold text-slate-400 text-[11px] uppercase tracking-wider">Lista activa:</span>
+          <select id="select-active-playlist" class="bg-slate-950 text-sky-300 font-bold px-2.5 py-1 rounded-lg border border-sky-500/40 focus:outline-none cursor-pointer max-w-[180px] sm:max-w-[240px] truncate">
+            <!-- Inyección dinámica de listas -->
+          </select>
+          <button id="btn-new-playlist" class="px-2 py-1 rounded bg-sky-600 hover:bg-sky-500 text-white font-bold transition text-[11px] flex items-center gap-1 shadow-sm" title="Crear nueva lista de canciones">
+            <span>+ Nueva Lista</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <button id="btn-rename-playlist" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition text-[11px]" title="Renombrar la lista seleccionada">
+            ✏️ Renombrar
+          </button>
+          <button id="btn-duplicate-playlist" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition text-[11px]" title="Duplicar esta lista">
+            📋 Duplicar
+          </button>
+          <button id="btn-delete-playlist" class="px-2 py-1 rounded bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-500/40 transition text-[11px]" title="Eliminar lista">
+            🗑️ Borrar lista
+          </button>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-12 flex-1 overflow-hidden">
         
         <div class="md:col-span-5 border-b md:border-b-0 md:border-r border-slate-800 p-3 flex flex-col gap-2 overflow-hidden bg-slate-900/50">
           <div class="flex items-center justify-between text-xs font-semibold text-slate-400 uppercase">
-            <span>Canciones (<span id="song-count">0</span>)</span>
+            <span>Canciones en lista (<span id="song-count">0</span>)</span>
             <button id="btn-new-song" class="text-sky-400 hover:text-sky-300 font-bold">+ Nuevo Tema</button>
           </div>
           <div id="songs-list-container" class="flex-1 overflow-y-auto no-scrollbar space-y-1.5 pr-1 max-h-[25vh] md:max-h-full"></div>
@@ -519,6 +544,51 @@ Pero jamás po[C]drán matar la liber[G]tad"></textarea>
     </div>
   </div>
 
+  <!-- ================= MODAL DE ENTRADA PARA NUEVA/RENOMBRAR LISTA ================= -->
+  <div id="playlist-input-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[60] flex items-center justify-center p-4 hidden transition-all duration-200">
+    <div class="bg-slate-900 border border-sky-500/60 rounded-2xl p-5 sm:p-6 max-w-md w-full shadow-2xl flex flex-col gap-4 text-left">
+      <div class="flex items-center gap-2 text-sky-400 font-bold text-base">
+        <span>📑</span>
+        <h4 id="playlist-modal-title" class="text-white">Nombre de la lista</h4>
+      </div>
+      <div>
+        <label for="input-playlist-name" class="block text-xs font-semibold text-slate-400 mb-1.5">Nombre:</label>
+        <input type="text" id="input-playlist-name" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-slate-100 text-sm font-semibold focus:outline-none focus:border-sky-500" placeholder="Ej: Show Acústico, Festival Rock...">
+      </div>
+      <div class="flex items-center justify-end gap-2.5 mt-2">
+        <button id="btn-cancel-playlist-input" class="py-2 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 font-semibold text-xs transition border border-slate-700">
+          Cancelar
+        </button>
+        <button id="btn-confirm-playlist-input" class="py-2 px-5 rounded-xl bg-sky-600 hover:bg-sky-500 active:scale-95 text-white font-bold text-xs transition shadow-lg shadow-sky-950/50">
+          Guardar lista
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL DE CONFIRMACIÓN PARA ELIMINAR LISTA ================= -->
+  <div id="delete-playlist-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[60] flex items-center justify-center p-4 hidden transition-all duration-200">
+    <div class="bg-slate-900 border border-rose-500/50 rounded-2xl p-5 sm:p-6 max-w-md w-full shadow-2xl flex flex-col gap-4 text-center">
+      <div class="w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto text-2xl font-bold">
+        🗑️
+      </div>
+      <div>
+        <h4 class="text-base font-bold text-white mb-1">¿Eliminar esta lista completa?</h4>
+        <p class="text-xs text-slate-300">
+          Estás por borrar la lista <span id="delete-playlist-name-label" class="text-rose-400 font-semibold font-mono">"Lista"</span> con todos sus temas.
+        </p>
+      </div>
+      <div class="flex items-center justify-center gap-3 mt-1">
+        <button id="btn-cancel-delete-playlist" class="flex-1 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 font-semibold text-xs transition border border-slate-700">
+          Cancelar
+        </button>
+        <button id="btn-confirm-delete-playlist" class="flex-1 py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-xs transition shadow-lg shadow-rose-950/50">
+          Sí, eliminar lista
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div id="toast" class="fixed top-12 left-1/2 -translate-x-1/2 bg-slate-800/95 border border-slate-700 text-slate-100 text-xs px-4 py-1.5 rounded-full shadow-2xl pointer-events-none transition-all duration-300 opacity-0 -translate-y-2 z-50"></div>
 
@@ -578,8 +648,14 @@ Que me estoy mu[C]riendo de [G]frío`
     const CHROMATIC_SCALE = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
     const FLAT_MAP = { "Db": "C#", "Eb": "D#", "Gb": "F#", "Ab": "G#", "Bb": "A#" };
 
+    const STORAGE_KEY_PLAYLISTS = 'teleprompter_band_playlists_v2';
+    const STORAGE_KEY_ACTIVE_ID = 'teleprompter_band_active_playlist_id';
+    const STORAGE_KEY_PREFS = 'teleprompter_band_user_prefs';
+
     const state = {
-      setlist: [...INITIAL_SETLIST],
+      playlists: [],
+      activePlaylistId: null,
+      setlist: [],
       currentSongIndex: 0,
       isPlaying: false,
       isVoiceMode: true,
@@ -607,11 +683,7 @@ Que me estoy mu[C]riendo de [G]frío`
     let lineElements = [];
 
     // Referencias DOM
-    const stageFlashOverlay = document.getElementById('stage-flash-overlay');
-    const stageHud = document.getElementById('stage-hud');
-    const hudIcon = document.getElementById('hud-icon');
-    const hudText = document.getElementById('hud-text');
-
+    const appBody = document.getElementById('app-body');
     const teleprompterContent = document.getElementById('teleprompter-content');
     const scrollWrapper = document.getElementById('scroll-wrapper');
     const stageElement = document.getElementById('teleprompter-stage');
@@ -666,13 +738,31 @@ Que me estoy mu[C]riendo de [G]frío`
     const detectedTranscript = document.getElementById('detected-transcript');
     const toast = document.getElementById('toast');
 
+    // Referencias de Gestión de Listas
+    const selectActivePlaylist = document.getElementById('select-active-playlist');
+    const btnNewPlaylist = document.getElementById('btn-new-playlist');
+    const btnRenamePlaylist = document.getElementById('btn-rename-playlist');
+    const btnDuplicatePlaylist = document.getElementById('btn-duplicate-playlist');
+    const btnDeletePlaylist = document.getElementById('btn-delete-playlist');
+    const playlistInputModal = document.getElementById('playlist-input-modal');
+    const playlistModalTitle = document.getElementById('playlist-modal-title');
+    const inputPlaylistName = document.getElementById('input-playlist-name');
+    const btnCancelPlaylistInput = document.getElementById('btn-cancel-playlist-input');
+    const btnConfirmPlaylistInput = document.getElementById('btn-confirm-playlist-input');
+    const deletePlaylistModal = document.getElementById('delete-playlist-modal');
+    const deletePlaylistNameLabel = document.getElementById('delete-playlist-name-label');
+    const btnCancelDeletePlaylist = document.getElementById('btn-cancel-delete-playlist');
+    const btnConfirmDeletePlaylist = document.getElementById('btn-confirm-delete-playlist');
+
+    let playlistModalAction = 'new'; // 'new' | 'rename'
+
     // Referencias del Modal de Confirmación de Eliminación
     const deleteConfirmModal = document.getElementById('delete-confirm-modal');
     const deleteConfirmSongTitle = document.getElementById('delete-confirm-song-title');
     const btnCancelDelete = document.getElementById('btn-cancel-delete');
     const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-    // Elementos Auto-Cue (20s)
+    // Elementos Auto-Cue
     const autocueModal = document.getElementById('autocue-modal');
     const autocueNextCard = document.getElementById('autocue-next-card');
     const autocueNextTitle = document.getElementById('autocue-next-title');
@@ -686,14 +776,206 @@ Que me estoy mu[C]riendo de [G]frío`
     const autocueBtnLabel = document.getElementById('autocue-btn-label');
     const btnAutocueBack = document.getElementById('btn-autocue-back');
 
-    // Elementos del Modal de Fin del Repertorio (Fijo)
-    const finalSetlistModal = document.getElementById('final-setlist-modal');
-    const finalSongsList = document.getElementById('final-songs-list');
-    const btnFinalRepeatLast = document.getElementById('btn-final-repeat-last');
-    const btnFinalFirstSong = document.getElementById('btn-final-first-song');
-    const btnFinalClose = document.getElementById('btn-final-close');
-
     let editingSongId = null;
+
+    function saveStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY_PLAYLISTS, JSON.stringify(state.playlists));
+        localStorage.setItem(STORAGE_KEY_ACTIVE_ID, state.activePlaylistId);
+        const prefs = {
+          fontSize: state.fontSize,
+          speed: state.speed,
+          guidePosition: state.guidePosition,
+          showChords: state.showChords,
+          currentSongIndex: state.currentSongIndex,
+          isGuideVisible: state.isGuideVisible
+        };
+        localStorage.setItem(STORAGE_KEY_PREFS, JSON.stringify(prefs));
+      } catch (e) {
+        console.error("Error al guardar en localStorage:", e);
+      }
+    }
+
+    function loadStorage() {
+      try {
+        const rawPlaylists = localStorage.getItem(STORAGE_KEY_PLAYLISTS);
+        const savedActiveId = localStorage.getItem(STORAGE_KEY_ACTIVE_ID);
+        const rawPrefs = localStorage.getItem(STORAGE_KEY_PREFS);
+
+        if (rawPlaylists) {
+          state.playlists = JSON.parse(rawPlaylists);
+        } else {
+          // Inicializar primera lista por defecto
+          state.playlists = [
+            {
+              id: "playlist_default",
+              name: "Repertorio Principal",
+              songs: JSON.parse(JSON.stringify(INITIAL_SETLIST))
+            }
+          ];
+        }
+
+        if (savedActiveId && state.playlists.some(p => p.id === savedActiveId)) {
+          state.activePlaylistId = savedActiveId;
+        } else {
+          state.activePlaylistId = state.playlists[0].id;
+        }
+
+        const activeList = state.playlists.find(p => p.id === state.activePlaylistId) || state.playlists[0];
+        state.setlist = activeList.songs;
+
+        if (rawPrefs) {
+          const prefs = JSON.parse(rawPrefs);
+          if (prefs.fontSize) state.fontSize = prefs.fontSize;
+          if (prefs.speed) state.speed = prefs.speed;
+          if (prefs.guidePosition) state.guidePosition = prefs.guidePosition;
+          if (typeof prefs.showChords === 'boolean') state.showChords = prefs.showChords;
+          if (typeof prefs.isGuideVisible === 'boolean') state.isGuideVisible = prefs.isGuideVisible;
+          if (typeof prefs.currentSongIndex === 'number' && prefs.currentSongIndex < state.setlist.length) {
+            state.currentSongIndex = prefs.currentSongIndex;
+          }
+        }
+      } catch (e) {
+        console.error("Error al cargar localStorage, usando datos por defecto:", e);
+        state.playlists = [{ id: "playlist_default", name: "Repertorio Principal", songs: [...INITIAL_SETLIST] }];
+        state.activePlaylistId = "playlist_default";
+        state.setlist = state.playlists[0].songs;
+      }
+    }
+
+    function getActivePlaylist() {
+      return state.playlists.find(p => p.id === state.activePlaylistId) || state.playlists[0];
+    }
+
+    function syncPlaylistSelectorUI() {
+      selectActivePlaylist.innerHTML = '';
+      state.playlists.forEach(pl => {
+        const opt = document.createElement('option');
+        opt.value = pl.id;
+        opt.textContent = `${pl.name} (${pl.songs.length})`;
+        if (pl.id === state.activePlaylistId) opt.selected = true;
+        selectActivePlaylist.appendChild(opt);
+      });
+    }
+
+    function switchPlaylist(playlistId) {
+      if (!state.playlists.some(p => p.id === playlistId)) return;
+      state.activePlaylistId = playlistId;
+      const currentList = getActivePlaylist();
+      state.setlist = currentList.songs;
+      state.currentSongIndex = 0;
+      state.transposeSemi = 0;
+      transposeIndicator.textContent = "0";
+      syncPlaylistSelectorUI();
+      renderCurrentSong();
+      renderSetlistModal();
+      selectSongForEditing(0);
+      saveStorage();
+      showToast(`Lista cargada: ${currentList.name}`);
+    }
+
+    selectActivePlaylist.addEventListener('change', (e) => {
+      switchPlaylist(e.target.value);
+    });
+
+    btnNewPlaylist.addEventListener('click', () => {
+      playlistModalAction = 'new';
+      playlistModalTitle.textContent = "Crear nueva lista";
+      inputPlaylistName.value = `Lista ${state.playlists.length + 1}`;
+      playlistInputModal.classList.remove('hidden');
+      setTimeout(() => inputPlaylistName.select(), 50);
+    });
+
+    btnRenamePlaylist.addEventListener('click', () => {
+      const activeList = getActivePlaylist();
+      playlistModalAction = 'rename';
+      playlistModalTitle.textContent = "Renombrar lista actual";
+      inputPlaylistName.value = activeList.name;
+      playlistInputModal.classList.remove('hidden');
+      setTimeout(() => inputPlaylistName.select(), 50);
+    });
+
+    btnCancelPlaylistInput.addEventListener('click', () => {
+      playlistInputModal.classList.add('hidden');
+    });
+
+    btnConfirmPlaylistInput.addEventListener('click', () => {
+      const name = inputPlaylistName.value.trim();
+      if (!name) {
+        showToast("Ingresa un nombre para la lista");
+        return;
+      }
+
+      if (playlistModalAction === 'new') {
+        const newPl = {
+          id: "playlist_" + Date.now(),
+          name: name,
+          songs: [
+            {
+              id: "song_" + Date.now(),
+              title: "1. Tema de Ejemplo",
+              bpm: 80,
+              notes: "Tono: C • Intro 4 compases",
+              content: "[C]Escribe la letra con [G]acordes entre corchetes"
+            }
+          ]
+        };
+        state.playlists.push(newPl);
+        switchPlaylist(newPl.id);
+        showToast(`Lista creada: "${name}"`);
+      } else {
+        const activeList = getActivePlaylist();
+        activeList.name = name;
+        syncPlaylistSelectorUI();
+        saveStorage();
+        showToast(`Lista renombrada a "${name}"`);
+      }
+
+      playlistInputModal.classList.add('hidden');
+    });
+
+    btnDuplicatePlaylist.addEventListener('click', () => {
+      const current = getActivePlaylist();
+      const cloned = {
+        id: "playlist_" + Date.now(),
+        name: `${current.name} (Copia)`,
+        songs: JSON.parse(JSON.stringify(current.songs))
+      };
+      state.playlists.push(cloned);
+      switchPlaylist(cloned.id);
+      showToast(`Lista duplicada: "${cloned.name}"`);
+    });
+
+    btnDeletePlaylist.addEventListener('click', () => {
+      if (state.playlists.length <= 1) {
+        showToast("No puedes eliminar la única lista existente");
+        return;
+      }
+      const current = getActivePlaylist();
+      deletePlaylistNameLabel.textContent = `"${current.name}"`;
+      deletePlaylistModal.classList.remove('hidden');
+    });
+
+    btnCancelDeletePlaylist.addEventListener('click', () => {
+      deletePlaylistModal.classList.add('hidden');
+    });
+
+    btnConfirmDeletePlaylist.addEventListener('click', () => {
+      const currentId = state.activePlaylistId;
+      state.playlists = state.playlists.filter(p => p.id !== currentId);
+      state.activePlaylistId = state.playlists[0].id;
+      const nextList = getActivePlaylist();
+      state.setlist = nextList.songs;
+      state.currentSongIndex = 0;
+      state.transposeSemi = 0;
+      deletePlaylistModal.classList.add('hidden');
+      syncPlaylistSelectorUI();
+      renderCurrentSong();
+      renderSetlistModal();
+      selectSongForEditing(0);
+      saveStorage();
+      showToast("Lista eliminada");
+    });
 
     function showToast(msg) {
       toast.textContent = msg;
@@ -1553,16 +1835,256 @@ Que me estoy mu[C]riendo de [G]frío`
         const item = document.createElement('div');
         const isActive = idx === state.currentSongIndex;
         item.className = `p-2 rounded-lg border flex items-center justify-between text-xs cursor-pointer transition ${isActive ? 'bg-sky-950/70 border-sky-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'}`;
+        
         item.innerHTML = `
-          <div class="flex items-center gap-2 truncate">
+          <div class="flex items-center gap-2 truncate flex-1 min-w-0">
             <span class="font-mono text-slate-500 font-bold">${idx + 1}.</span>
             <span class="truncate font-semibold">${song.title}</span>
           </div>
-          <span class="font-mono text-[10px] text-sky-400 bg-slate-800 px-1.5 py-0.5 rounded">${song.bpm || 80} BPM</span>
+          <div class="flex items-center gap-1.5 shrink-0 ml-2">
+            <span class="font-mono text-[10px] text-sky-400 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">${song.bpm || 80} BPM</span>
+            <button class="btn-move-up p-1 rounded hover:bg-slate-700 text-slate-400 hover:text-white transition" title="Mover arriba">▲</button>
+            <button class="btn-move-down p-1 rounded hover:bg-slate-700 text-slate-400 hover:text-white transition" title="Mover abajo">▼</button>
+          </div>
         `;
-        item.addEventListener('click', () => selectSongForEditing(idx));
+
+        item.addEventListener('click', (e) => {
+          if (!e.target.closest('button')) {
+            selectSongForEditing(idx);
+          }
+        });
+
+        item.querySelector('.btn-move-up').addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (idx > 0) {
+            const temp = state.setlist[idx];
+            state.setlist[idx] = state.setlist[idx - 1];
+            state.setlist[idx - 1] = temp;
+            if (state.currentSongIndex === idx) state.currentSongIndex = idx - 1;
+            else if (state.currentSongIndex === idx - 1) state.currentSongIndex = idx;
+            renderSetlistModal();
+            syncSongSelectorUI();
+            saveStorage();
+          }
+        });
+
+        item.querySelector('.btn-move-down').addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (idx < state.setlist.length - 1) {
+            const temp = state.setlist[idx];
+            state.setlist[idx] = state.setlist[idx + 1];
+            state.setlist[idx + 1] = temp;
+            if (state.currentSongIndex === idx) state.currentSongIndex = idx + 1;
+            else if (state.currentSongIndex === idx + 1) state.currentSongIndex = idx;
+            renderSetlistModal();
+            syncSongSelectorUI();
+            saveStorage();
+          }
+        });
+
         songsListContainer.appendChild(item);
       });
+      songCount.textContent = state.setlist.length;
+    }
+
+    function selectSongForEditing(idx) {
+      const s = state.setlist[idx];
+      if (!s) return;
+      editingSongId = s.id;
+      editSongTitle.value = s.title;
+      editSongBpm.value = s.bpm || 80;
+      editSongNotes.value = s.notes || "";
+      editSongContent.value = s.content;
+      renderSetlistModal();
+    }
+
+    btnNewSong.addEventListener('click', () => {
+      const newSong = {
+        id: "song_" + Date.now(),
+        title: `Nuevo Tema (${state.setlist.length + 1})`,
+        bpm: 85,
+        notes: "Tono: C • Intro 4 compases",
+        content: `[C]Escribe la letra con los [G]acordes entre cor[Am]chetes o parénte(F)sis`
+      };
+      state.setlist.push(newSong);
+      selectSongForEditing(state.setlist.length - 1);
+      syncSongSelectorUI();
+      syncPlaylistSelectorUI();
+      saveStorage();
+    });
+
+    btnSaveSong.addEventListener('click', () => {
+      const s = state.setlist.find(item => item.id === editingSongId);
+      if (s) {
+        s.title = editSongTitle.value.trim() || "Sin Título";
+        s.bpm = parseInt(editSongBpm.value) || 80;
+        s.notes = editSongNotes.value.trim();
+        s.content = editSongContent.value.trim();
+        renderSetlistModal();
+        syncSongSelectorUI();
+        syncPlaylistSelectorUI();
+        saveStorage();
+        showToast('Tema guardado');
+      }
+    });
+
+    // Modal de confirmación para eliminar
+    btnDeleteSong.addEventListener('click', () => {
+      if (state.setlist.length <= 1) {
+        showToast('Debe haber al menos un tema en el repertorio');
+        return;
+      }
+      const s = state.setlist.find(item => item.id === editingSongId);
+      deleteConfirmSongTitle.textContent = `"${s ? s.title : 'este tema'}"`;
+      deleteConfirmModal.classList.remove('hidden');
+    });
+
+    btnCancelDelete.addEventListener('click', () => {
+      deleteConfirmModal.classList.add('hidden');
+    });
+
+    btnConfirmDelete.addEventListener('click', () => {
+      state.setlist = state.setlist.filter(s => s.id !== editingSongId);
+      state.currentSongIndex = Math.min(state.currentSongIndex, state.setlist.length - 1);
+      selectSongForEditing(state.currentSongIndex);
+      syncSongSelectorUI();
+      syncPlaylistSelectorUI();
+      renderCurrentSong();
+      deleteConfirmModal.classList.add('hidden');
+      saveStorage();
+      showToast('Tema eliminado del repertorio');
+    });
+
+    btnLoadAndExit.addEventListener('click', () => {
+      const sIdx = state.setlist.findIndex(item => item.id === editingSongId);
+      if (sIdx !== -1) state.currentSongIndex = sIdx;
+      state.transposeSemi = 0;
+      transposeIndicator.textContent = "0";
+      renderCurrentSong();
+      rewind();
+      setlistModal.classList.add('hidden');
+      saveStorage();
+      showToast('Tema cargado');
+    });
+
+    btnOpenSetlist.addEventListener('click', () => {
+      if (state.isPlaying) stopPrompter();
+      syncPlaylistSelectorUI();
+      renderSetlistModal();
+      selectSongForEditing(state.currentSongIndex);
+      setlistModal.classList.remove('hidden');
+    });
+
+    btnCloseSetlist.addEventListener('click', () => setlistModal.classList.add('hidden'));
+    btnFinishModal.addEventListener('click', () => setlistModal.classList.add('hidden'));
+
+    selectActiveSong.addEventListener('change', (e) => {
+      state.currentSongIndex = parseInt(e.target.value);
+      state.transposeSemi = 0;
+      transposeIndicator.textContent = "0";
+      renderCurrentSong();
+      rewind();
+      saveStorage();
+    });
+
+    btnPrevSong.addEventListener('click', () => {
+      if (state.currentSongIndex > 0) {
+        state.currentSongIndex--;
+        state.transposeSemi = 0;
+        transposeIndicator.textContent = "0";
+        renderCurrentSong();
+        rewind();
+        saveStorage();
+      }
+    });
+
+    btnNextSong.addEventListener('click', () => {
+      if (state.currentSongIndex < state.setlist.length - 1) {
+        state.currentSongIndex++;
+        state.transposeSemi = 0;
+        transposeIndicator.textContent = "0";
+        renderCurrentSong();
+        rewind();
+        saveStorage();
+      }
+    });
+
+    // ================= EXPORTACIÓN E IMPORTACIÓN JSON =================
+    btnExportSetlist.addEventListener('click', () => {
+      const exportPackage = {
+        app: "TeleprompterProBanda",
+        version: "2.0",
+        exportedAt: new Date().toISOString(),
+        playlists: state.playlists,
+        activePlaylistId: state.activePlaylistId
+      };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportPackage, null, 2));
+      const a = document.createElement('a');
+      a.href = dataStr;
+      const currentList = getActivePlaylist();
+      const safeName = currentList.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      a.download = `repertorios_banda_${safeName}_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      showToast('Repertorios exportados');
+    });
+
+    inputImportSetlist.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const imported = JSON.parse(event.target.result);
+          // Soporta tanto el formato nuevo de múltiples playlists como el formato clásico de lista única de temas
+          if (imported.playlists && Array.isArray(imported.playlists) && imported.playlists.length > 0) {
+            state.playlists = imported.playlists;
+            state.activePlaylistId = imported.activePlaylistId || state.playlists[0].id;
+            state.setlist = getActivePlaylist().songs;
+            state.currentSongIndex = 0;
+          } else if (Array.isArray(imported) && imported.length > 0) {
+            const importedList = {
+              id: "playlist_imp_" + Date.now(),
+              name: `Importada (${new Date().toLocaleDateString()})`,
+              songs: imported
+            };
+            state.playlists.push(importedList);
+            state.activePlaylistId = importedList.id;
+            state.setlist = importedList.songs;
+            state.currentSongIndex = 0;
+          } else {
+            showToast('Formato JSON no válido');
+            return;
+          }
+
+          state.transposeSemi = 0;
+          syncPlaylistSelectorUI();
+          renderCurrentSong();
+          renderSetlistModal();
+          saveStorage();
+          showToast('Repertorio importado y guardado');
+        } catch (err) {
+          showToast('Error al leer el archivo JSON');
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    function updateFontSize() {
+      teleprompterContent.style.fontSize = `${state.fontSize}px`;
+      fontVal.textContent = state.fontSize;
+      fontSlider.value = state.fontSize;
+    }
+
+    fontSlider.addEventListener('input', (e) => {
+      state.fontSize = parseInt(e.target.value);
+      updateFontSize();
+      saveStorage();
+    });
+
+    speedSlider.addEventListener('input', (e) => {
+      state.speed = parseFloat(e.target.value);
+      saveStorage();
+    });
     }
 
     function selectSongForEditing(idx) {
@@ -1946,6 +2468,14 @@ Que me estoy mu[C]riendo de [G]frío`
 
     // Inicio
     window.addEventListener('DOMContentLoaded', () => {
+      loadStorage();
+      updateFontSize();
+      speedSlider.value = state.speed;
+      guidePosSlider.value = state.guidePosition;
+      btnToggleChords.textContent = `Acordes: ${state.showChords ? 'ON' : 'OFF'}`;
+      btnToggleChords.classList.toggle('bg-sky-950', state.showChords);
+      btnToggleChords.classList.toggle('bg-slate-800', !state.showChords);
+      syncPlaylistSelectorUI();
       renderCurrentSong();
       initSpeech();
     });
